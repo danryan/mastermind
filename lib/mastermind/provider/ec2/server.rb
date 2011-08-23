@@ -9,7 +9,7 @@ module Mastermind
         
         default_action :create
         
-        option :availability_zone, :type => :string, :required => true
+        option :availability_zone, :type => :array, :required => true
         option :flavor_id,         :type => :string, :required => true
         option :image_id,          :type => :string, :required => true
         option :key_name,          :type => :string, :required => true

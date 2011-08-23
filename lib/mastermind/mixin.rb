@@ -5,6 +5,17 @@ module Mastermind
       base.extend(Mastermind::Mixin::DSL)
     end
     
+    CONFIGSORT = {
+      Symbol => 0,
+      String => 0,
+      Regexp => 100,
+    }
+    
+  
+    def options
+      @options
+    end
+    
     def set_or_get(option, value=nil, default=nil)
       if value
         instance_variable_set(:"@#{option}", value)
@@ -16,16 +27,6 @@ module Mastermind
           instance_variable_get(:"@#{option}")
         end
       end
-    end
-    
-    CONFIGSORT = {
-      Symbol => 0,
-      String => 0,
-      Regexp => 100,
-    }
-  
-    def options
-      @options
     end
     
     def options_init(params)
@@ -62,6 +63,19 @@ module Mastermind
     
     module DSL
       
+      def set_or_get(option, value=nil, default=nil)
+        if value
+          instance_variable_set(:"@#{option}", value)
+        else
+          if instance_variable_get(:"@#{option}")
+            instance_variable_get(:"@#{option}")
+          else 
+            instance_variable_set(:"@#{option}", default)
+            instance_variable_get(:"@#{option}")
+          end
+        end
+      end
+      
       def default_action(action=nil)
         @default_action = action if !action.nil?
         return @default_action
@@ -88,15 +102,17 @@ module Mastermind
         
         @options[name] = options
         
-        define_method(name) { instance_variable_get("@#{name}") }
-        define_method("#{name}=") { |v| instance_variable_set("@#{name}", v) }
+        # define_method(name) { instance_variable_get("@#{name}") }
+        define_method("#{name}") do |*v| 
+          set_or_get("#{name}", v.first)
+        end
       end
       
       def inherited(subclass)
         suboptions = Hash.new
         if !@options.nil?
           @options.each do |key, value|
-            suboptions[key] = val
+            suboptions[key] = value
           end
         end
         subclass.instance_variable_set("@options", suboptions)
@@ -126,11 +142,11 @@ module Mastermind
         
         is_valid = true
         
-        @options.each_key do |attr_key|
-          if attr_key.is_a?(Regexp)
-            invalid_params.reject! { |k| k =~ attr_key }
-          elsif attr_key.is_a?(String) || attr_key.is_a?(Symbol)
-            invalid_params.reject! { |k| k == attr_key }
+        @options.each_key do |opt_key|
+          if opt_key.is_a?(Regexp)
+            invalid_params.reject! { |k| k =~ opt_key }
+          elsif opt_key.is_a?(String) || opt_key.is_a?(Symbol)
+            invalid_params.reject! { |k| k == opt_key }
           end
         end
         
@@ -146,15 +162,15 @@ module Mastermind
       def validate_check_required_parameter_names(params)
         is_valid = true
         
-        @options.each do |attr_key, option|
+        @options.each do |opt_key, option|
           next unless option[:required]
           
-          if attr_key.is_a?(Regexp)
-            next if params.keys.select { |k| k =~ attr_key }.length > 0
-          elsif attr_key.is_a?(String) || attr_key.is_a?(Symbol)
-            next if params.keys.include?(attr_key)
+          if opt_key.is_a?(Regexp)
+            next if params.keys.select { |k| k =~ opt_key }.length > 0
+          elsif opt_key.is_a?(String) || opt_key.is_a?(Symbol)
+            next if params.keys.include?(opt_key)
           end
-          puts "Missing required parameter '#{attr_key}' for '#{provider_name}'"
+          puts "Missing required parameter '#{opt_key}' for '#{provider_name}'"
           is_valid = false
         end
         
@@ -164,16 +180,16 @@ module Mastermind
       def validate_check_parameter_values(params)
         is_valid = true
         
-        attr_keys = @options.keys.sort do |a,b|
+        opt_keys = @options.keys.sort do |a,b|
           CONFIGSORT[a.class] <=> CONFIGSORT[b.class]
         end
         
         params.each do |key, value|
-          attr_keys.each do |attr_key|
-            next unless (attr_key.is_a?(Regexp) && key =~ attr_key) ||
-              (attr_key.is_a?(String) && key == attr_key)
-            attr_val = @options[attr_key][:type]
-            success, result = validate_value(value, attr_val)
+          opt_keys.each do |opt_key|
+            next unless (opt_key.is_a?(Regexp) && key =~ opt_key) ||
+              (opt_key.is_a?(String) && key == opt_key)
+            opt_val = @options[opt_key][:type]
+            success, result = validate_value(value, opt_val)
             if success
               params[key] = result if !result.nil?
             else
@@ -189,9 +205,9 @@ module Mastermind
       end
       
       def validator_find(key)
-        @options.each do |attr_key, attr_val|
-          if (attr_key.is_a?(Regexg) && key =~ attr_key) || (attr_key.is_a?(String) && key == attr_key)
-            return attr_val
+        @options.each do |opt_key, opt_val|
+          if (opt_key.is_a?(Regexg) && key =~ opt_key) || (opt_key.is_a?(String) && key == opt_key)
+            return opt_val
           end
         end
         return nil
@@ -248,7 +264,7 @@ module Mastermind
             result = (value.first == "true")
           end
         else
-          return valse, "Unknown validator #{validator.class}"
+          return false, "Unknown validator #{validator.class}"
         end
         
         return true, result
@@ -269,5 +285,6 @@ module Mastermind
       #       end
 
     end
+      
   end
 end

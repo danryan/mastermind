@@ -10,12 +10,12 @@ plot = Mastermind::Plot.new("foobar") do
     task "foo" do
       # action :create
       provider Mastermind::Provider::EC2::Server
-      # options({
-      #   :availability_zone => "us-east-1a",
-      #   :flavor_id => "t1.micro",
-      #   :image_id => "ami-abcd1234",
-      #   :key_name => "c2_test"
-      # })
+      options({
+        :availability_zone => ["asdf", "asdf"],
+        :flavor_id => "t1.micro",
+        :image_id => "ami-abcd1234",
+        :key_name => "c2_test"
+      })
     end
 
     task "bar" do
@@ -45,3 +45,11 @@ end
 # puts Mastermind::Provider.registry
 
 plot.run
+
+plot.tasks.each do |task|
+  p = task.provider.new(task.options)
+  p.flavor_id "foo"
+  p.availability_zone "wat"
+  puts p.flavor_id
+  puts p.availability_zone
+end

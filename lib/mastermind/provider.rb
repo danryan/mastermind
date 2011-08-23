@@ -6,6 +6,8 @@ module Mastermind
       options_init(options)
     end
 
+    option :action, :type => :symbol
+    
     @registry = Hash.new
 
     class << self
