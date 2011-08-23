@@ -11,7 +11,6 @@ module Mastermind
         attribute :admin, :type => :boolean, :default => false
         attribute :private_key, :type => :string
         
-        
         def create
           puts "Creating chef client #{name}"
         end
