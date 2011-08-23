@@ -1,6 +1,6 @@
 require 'mastermind/version'
 require 'mastermind/mixin'
-# require 'mastermind/registry'
+require 'mastermind/registry'
 require 'mastermind/plot'
 require 'mastermind/task'
 require 'mastermind/task_list'

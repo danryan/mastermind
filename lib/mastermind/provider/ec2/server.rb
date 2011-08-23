@@ -7,19 +7,18 @@ module Mastermind
         
         actions :create, :destroy, :stop, :start, :terminate
         
-        default_action :create
-        
-        option :availability_zone, :type => :array, :required => true
-        option :flavor_id,         :type => :string, :required => true
-        option :image_id,          :type => :string, :required => true
-        option :key_name,          :type => :string, :required => true
-        option :groups,            :type => :array
-        option :user_data,         :type => :string
-        option :monitoring,        :type => :boolean        
+        # default_action :create
+        attribute :action, :default => :create
+        attribute :availability_zone, :type => :array, :required => true
+        attribute :flavor_id,         :type => :string, :required => true
+        attribute :image_id,          :type => :string, :required => true
+        attribute :key_name,          :type => :string, :required => true
+        attribute :groups,            :type => :array
+        attribute :user_data,         :type => :string
+        attribute :monitoring,        :type => :boolean        
         
         def create
           puts "Create!"
-          puts options.inspect
         end
 
         def destroy
@@ -33,15 +32,6 @@ module Mastermind
         def start
           puts "Start!"
         end
-        
-        # actions.each do |act|
-        #   meth = "#{provider_name}_#{act}"
-        #   Mastermind::TaskList.instance_eval <<-EOF
-        #     define_method meth do |*args|
-        #       puts "Hi from inside #{meth}"
-        #     end
-        #   EOF
-        # end
         
       end
     end

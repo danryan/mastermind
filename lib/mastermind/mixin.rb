@@ -11,37 +11,36 @@ module Mastermind
       Regexp => 100,
     }
     
-  
-    def options
-      @options
+    def attributes
+      @attributes
     end
     
-    def set_or_get(option, value=nil, default=nil)
+    def set_or_get(attribute, value=nil, default=nil)
       if value
-        instance_variable_set(:"@#{option}", value)
+        instance_variable_set(:"@#{attribute}", value)
       else
-        if instance_variable_get(:"@#{option}")
-          instance_variable_get(:"@#{option}")
+        if instance_variable_get(:"@#{attribute}")
+          instance_variable_get(:"@#{attribute}")
         else 
-          instance_variable_set(:"@#{option}", default)
-          instance_variable_get(:"@#{option}")
+          instance_variable_set(:"@#{attribute}", default)
+          instance_variable_get(:"@#{attribute}")
         end
       end
     end
     
-    def options_init(params)
-      if !self.class.validate(params)
-        puts "Validation failed."
-      end
+    def attributes_init(params)
+      # if !self.class.validate(params)
+        # puts "Validation failed."
+      # end
       
       params.each do |name, value|
-        opts = self.class.options[name]
+        opts = self.class.attributes[name]
         if opts && opts[:deprecated]
-          puts "Deprecated option item #{name.inspect} set in #{self.class.name}"
+          puts "Deprecated attribute item #{name.inspect} set in #{self.class.name}"
         end
       end
       
-      self.class.options.each do |name, opts|
+      self.class.attributes.each do |name, opts|
         next if params.include?(name)
         if opts.include?(:default) and (name.is_a?(Symbol) or name.is_a?(String))
           default = opts[:default]
@@ -56,22 +55,39 @@ module Mastermind
         instance_variable_set("@#{key}", value)
       end
       
-      @options = params
+      @attributes = params
       
+      # puts self.attributes.inspect
+      Mastermind::Registry.list.keys.each do |provider|
+        provider_class = Mastermind::Registry.list[provider]
+        Mastermind::TaskList.instance_eval do
+          define_method provider do |&block|
+            p = provider_class.new
+            p.instance_eval(&block)
+            p.send(p.action)
+          end
+        end
+      end
+    end
+    
+    def run_validations
+      if !self.class.validate(self.attributes)
+        puts "Validation failed."
+      end
     end
     
     
     module DSL
       
-      def set_or_get(option, value=nil, default=nil)
+      def set_or_get(attribute, value=nil, default=nil)
         if value
-          instance_variable_set(:"@#{option}", value)
+          instance_variable_set(:"@#{attribute}", value)
         else
-          if instance_variable_get(:"@#{option}")
-            instance_variable_get(:"@#{option}")
+          if instance_variable_get(:"@#{attribute}")
+            instance_variable_get(:"@#{attribute}")
           else 
-            instance_variable_set(:"@#{option}", default)
-            instance_variable_get(:"@#{option}")
+            instance_variable_set(:"@#{attribute}", default)
+            instance_variable_get(:"@#{attribute}")
           end
         end
       end
@@ -83,48 +99,81 @@ module Mastermind
       
       def provider_name(name=nil)
         @provider_name = name if !name.nil?
-        Mastermind::Provider.registry[@provider_name.to_sym] = self
+        Mastermind::Registry.list[@provider_name.to_sym] = self
+        provider_name = @provider_name
+        provider = Mastermind::Registry.list[@provider_name.to_sym]
+         
+        Mastermind::TaskList.instance_eval do
+          define_method provider_name do |&block|
+            p = provider.new
+            p.instance_eval(&block)
+            p.send(p.action)
+          end
+        end
         return @provider_name
       end
       
       def actions(*args)
         @actions = args if !args.empty?
+        # puts provider_name.inspect
+        # @actions.each do |action|
+        #   method_name = "#{provider_name}_#{action.to_s}".to_sym
+        #   provider = Mastermind::Registry.list[@provider_name]
+        #   Mastermind::TaskList.instance_eval do
+        #     define_method method_name do |&block|
+        #       p = provider.new
+        #       p.instance_eval(&block)
+        #       p.send(p.action)
+        #     end
+        #   end
+        # end
         return @actions
       end
-      
-      # def action(name, options, &block)
-      #   Mastermind::Action.new(name, options, &block)
-      # end
-      
-      # Validations and options
-      def option(name, options={})
-        @options ||= Hash.new
+
+      # Validations and attributes
+      def attribute(name, params={})
+        @attributes ||= Hash.new
         
-        @options[name] = options
+        @attributes[name] = params
         
         # define_method(name) { instance_variable_get("@#{name}") }
-        define_method("#{name}") do |*v| 
+        define_method("#{name}") do |*v|
+          @attributes[name] = v.first
           set_or_get("#{name}", v.first)
         end
+        
       end
       
       def inherited(subclass)
-        suboptions = Hash.new
-        if !@options.nil?
-          @options.each do |key, value|
-            suboptions[key] = value
+        subattributes = Hash.new
+        if !@attributes.nil?
+          @attributes.each do |key, value|
+            subattributes[key] = value
           end
         end
-        subclass.instance_variable_set("@options", suboptions)
+        subclass.instance_variable_set("@attributes", subattributes)
+        subclass.instance_variable_set("@actions", actions)
+        # puts subclass.actions.inspect
+        # subclass.actions.each do |act|
+        #           meth = "#{self.provider_name}_#{act}"
+        #           provider = self
+        #           Mastermind::TaskList.instance_eval do
+        #             define_method meth do |&block|
+        #               p = provider.new
+        #               p.instance_eval(&block)
+        #               p.send(act)
+        #             end
+        #           end
+        #         end
       end
       
-      def options
-        return @options
+      def attributes
+        return @attributes
       end
       
       
-      def get_otions
-        return @options
+      def get_options
+        return @attributes
       end
       
       def validate(params)
@@ -142,11 +191,11 @@ module Mastermind
         
         is_valid = true
         
-        @options.each_key do |opt_key|
-          if opt_key.is_a?(Regexp)
-            invalid_params.reject! { |k| k =~ opt_key }
-          elsif opt_key.is_a?(String) || opt_key.is_a?(Symbol)
-            invalid_params.reject! { |k| k == opt_key }
+        @attributes.each_key do |attr_key|
+          if attr_key.is_a?(Regexp)
+            invalid_params.reject! { |k| k =~ attr_key }
+          elsif attr_key.is_a?(String) || attr_key.is_a?(Symbol)
+            invalid_params.reject! { |k| k == attr_key }
           end
         end
         
@@ -162,15 +211,14 @@ module Mastermind
       def validate_check_required_parameter_names(params)
         is_valid = true
         
-        @options.each do |opt_key, option|
-          next unless option[:required]
-          
-          if opt_key.is_a?(Regexp)
-            next if params.keys.select { |k| k =~ opt_key }.length > 0
-          elsif opt_key.is_a?(String) || opt_key.is_a?(Symbol)
-            next if params.keys.include?(opt_key)
+        @attributes.each do |attr_key, attribute|
+          next unless attribute[:required]
+          if attr_key.is_a?(Regexp)
+            next if params.keys.select { |k| k =~ attr_key }.length > 0
+          elsif attr_key.is_a?(String) || attr_key.is_a?(Symbol)
+            next if params.keys.include?(attr_key)
           end
-          puts "Missing required parameter '#{opt_key}' for '#{provider_name}'"
+          puts "Missing required parameter '#{attr_key}' for '#{provider_name}'"
           is_valid = false
         end
         
@@ -180,20 +228,20 @@ module Mastermind
       def validate_check_parameter_values(params)
         is_valid = true
         
-        opt_keys = @options.keys.sort do |a,b|
+        attr_keys = @attributes.keys.sort do |a,b|
           CONFIGSORT[a.class] <=> CONFIGSORT[b.class]
         end
         
         params.each do |key, value|
-          opt_keys.each do |opt_key|
-            next unless (opt_key.is_a?(Regexp) && key =~ opt_key) ||
-              (opt_key.is_a?(String) && key == opt_key)
-            opt_val = @options[opt_key][:type]
-            success, result = validate_value(value, opt_val)
+          attr_keys.each do |attr_key|
+            next unless (attr_key.is_a?(Regexp) && key =~ attr_key) ||
+              (attr_key.is_a?(String) && key == attr_key)
+            attr_val = @attributes[attr_key][:type]
+            success, result = validate_value(value, attr_val)
             if success
               params[key] = result if !result.nil?
             else
-              puts "Failed option #{provider_name}/#{key}: #{result} (#{value.inspect})"
+              puts "Failed attribute #{provider_name}/#{key}: #{result} (#{value.inspect})"
             end
             is_valid &&= success
             
@@ -205,9 +253,9 @@ module Mastermind
       end
       
       def validator_find(key)
-        @options.each do |opt_key, opt_val|
-          if (opt_key.is_a?(Regexg) && key =~ opt_key) || (opt_key.is_a?(String) && key == opt_key)
-            return opt_val
+        @attributes.each do |attr_key, attr_val|
+          if (attr_key.is_a?(Regexg) && key =~ attr_key) || (attr_key.is_a?(String) && key == attr_key)
+            return attr_val
           end
         end
         return nil
