@@ -1,5 +1,6 @@
 module Mastermind
   class Plot
+    include Mixin
     
     attr_accessor :name, :tasks
     
@@ -15,17 +16,13 @@ module Mastermind
       end
     end
     
-    def tasks(&block)
-      if block_given?
-        @tasks.instance_eval(&block)
-      else
-        @tasks
-      end
+    def tasks
+      @tasks
     end
     
-    def run
+    def execute
       tasks.each do |task|
-        task.run
+        task.execute
       end
     end
   end

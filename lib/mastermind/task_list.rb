@@ -17,7 +17,7 @@ module Mastermind
     end
     
     def add(task)
-      raise ArgumentError, "task must be a Task object" unless task.is_a?(Task)
+      # raise ArgumentError, "task must be a Task object" unless task.is_a?(Task)
       @tasks << task
     end
     

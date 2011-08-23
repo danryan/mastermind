@@ -9,6 +9,7 @@ require 'mastermind/provider'
 require 'mastermind/provider/ec2'
 require 'mastermind/provider/ec2/server'
 require 'mastermind/provider/chef'
+require 'mastermind/provider/chef/client'
 
 module Mastermind
   

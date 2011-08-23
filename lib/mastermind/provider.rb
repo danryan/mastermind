@@ -5,15 +5,12 @@ module Mastermind
     provider_name :default
     actions :nothing
     
-    # attribute :action
-    attribute :foo, :type => :string
-    
     default_action :nothing
+    
+    attribute :name, :type => :string
     
     def initialize(options={})
       attributes_init(options)
-      # puts attributes.inspect
-      # generate_actions
     end
 
     def nothing
@@ -28,8 +25,9 @@ module Mastermind
       Mastermind::Registry.list[name]
     end
     
-    def run
+    def execute
       run_validations
+      self.send(self.action)
     end
 
   end

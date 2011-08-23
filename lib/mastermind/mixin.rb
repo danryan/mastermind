@@ -30,7 +30,7 @@ module Mastermind
     
     def attributes_init(params)
       # if !self.class.validate(params)
-        # puts "Validation failed."
+      #   puts "Validation failed."
       # end
       
       params.each do |name, value|
@@ -56,22 +56,10 @@ module Mastermind
       end
       
       @attributes = params
-      
-      # puts self.attributes.inspect
-      Mastermind::Registry.list.keys.each do |provider|
-        provider_class = Mastermind::Registry.list[provider]
-        Mastermind::TaskList.instance_eval do
-          define_method provider do |&block|
-            p = provider_class.new
-            p.instance_eval(&block)
-            p.send(p.action)
-          end
-        end
-      end
     end
     
     def run_validations
-      if !self.class.validate(self.attributes)
+      if !self.class.validate(@attributes)
         puts "Validation failed."
       end
     end
@@ -101,13 +89,18 @@ module Mastermind
         @provider_name = name if !name.nil?
         Mastermind::Registry.list[@provider_name.to_sym] = self
         provider_name = @provider_name
-        provider = Mastermind::Registry.list[@provider_name.to_sym]
+        provider_class = Mastermind::Registry.list[@provider_name.to_sym]
          
-        Mastermind::TaskList.instance_eval do
-          define_method provider_name do |&block|
-            p = provider.new
-            p.instance_eval(&block)
-            p.send(p.action)
+        Mastermind::Plot.instance_eval do
+          define_method provider_name do |name, &block|
+            task = Task.new(:name => name)
+            task.provider = provider_class
+            provider = task.provider.new
+            provider.name task.name
+            provider.instance_eval(&block)
+            task.attributes provider.attributes
+            task.action task.attributes[:action]
+            self.tasks << task
           end
         end
         return @provider_name
@@ -115,18 +108,6 @@ module Mastermind
       
       def actions(*args)
         @actions = args if !args.empty?
-        # puts provider_name.inspect
-        # @actions.each do |action|
-        #   method_name = "#{provider_name}_#{action.to_s}".to_sym
-        #   provider = Mastermind::Registry.list[@provider_name]
-        #   Mastermind::TaskList.instance_eval do
-        #     define_method method_name do |&block|
-        #       p = provider.new
-        #       p.instance_eval(&block)
-        #       p.send(p.action)
-        #     end
-        #   end
-        # end
         return @actions
       end
 
@@ -136,12 +117,11 @@ module Mastermind
         
         @attributes[name] = params
         
-        # define_method(name) { instance_variable_get("@#{name}") }
         define_method("#{name}") do |*v|
           @attributes[name] = v.first
           set_or_get("#{name}", v.first)
         end
-        
+        return @attribute
       end
       
       def inherited(subclass)
@@ -153,18 +133,6 @@ module Mastermind
         end
         subclass.instance_variable_set("@attributes", subattributes)
         subclass.instance_variable_set("@actions", actions)
-        # puts subclass.actions.inspect
-        # subclass.actions.each do |act|
-        #           meth = "#{self.provider_name}_#{act}"
-        #           provider = self
-        #           Mastermind::TaskList.instance_eval do
-        #             define_method meth do |&block|
-        #               p = provider.new
-        #               p.instance_eval(&block)
-        #               p.send(act)
-        #             end
-        #           end
-        #         end
       end
       
       def attributes

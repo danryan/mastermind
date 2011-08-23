@@ -8,7 +8,7 @@ module Mastermind
       @name = args.delete(:name)
       @provider = args.delete(:provider)
       @action = args.delete(:action)
-      @options = args
+      @attributes = args
     end
     
     def name(value=nil)
@@ -23,12 +23,12 @@ module Mastermind
       set_or_get(:provider, value)
     end
     
-    def options(value=nil)
-      set_or_get(:options, value)
+    def attributes(value=nil)
+      set_or_get(:attributes, value)
     end
     
-    def run
-      provider.new(options).send(action)
+    def execute
+      provider.new(attributes).send(action)
     end
   end
 end
