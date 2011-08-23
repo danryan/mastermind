@@ -41,11 +41,12 @@
       end
   
       chef_node server do
+        action :create
         run_list [ "recipe[foo]", "recipe[bar]" ]
       end
   
       route53_record server do
-        record server
+        zone 'zone-id-fooo'
         value server.public_dns_name
         type 'CNAME'
         ttl 300
