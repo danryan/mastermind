@@ -1,6 +1,7 @@
 module Mastermind
   class Resource
-    class DNS < Resource
+    class CM < Resource
+      resource_name :cm
     
     end
   end

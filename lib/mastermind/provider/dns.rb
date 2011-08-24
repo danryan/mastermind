@@ -1,9 +1,6 @@
 module Mastermind
   class Provider
-    class Chef
-      class Role < Chef
-        
-      end
+    class DNS < Provider
       
     end
   end

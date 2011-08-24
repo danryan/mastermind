@@ -1,7 +1,8 @@
 module Mastermind
   class Provider
-    class Chef < Provider
+    class Remote < Provider
       
     end
   end
 end
+
