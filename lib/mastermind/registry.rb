@@ -1,11 +1,11 @@
 module Mastermind
   class Registry
-    @list = Hash.new
+    @providers = Hash.new
+    @resources = Hash.new
     
     class << self
-      attr_accessor :list
+      attr_accessor :providers, :resources
     end
-    
     
   end
 end

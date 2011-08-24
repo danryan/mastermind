@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'fog', '>= 0.10.0'
   s.add_dependency 'spice', '>= 0.5.0'
+  s.add_dependency 'activemodel', '3.1.0.rc6'
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
   # s.add_runtime_dependency "rest-client"

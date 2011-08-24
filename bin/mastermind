@@ -3,7 +3,10 @@
 $: << File.join(File.dirname(__FILE__), "../lib")
 require 'mastermind'
 
-x = Mastermind::Plot.new("ec2")
-x.instance_eval(File.open(File.expand_path(ARGV[0])).read)
+plot = Mastermind::Plot.new("ec2")
+plot.instance_eval(File.open(File.expand_path(ARGV[0])).read)
 
-x.execute
+plot.tasks.each do |task|
+  puts task.inspect
+end
+  

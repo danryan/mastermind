@@ -1,36 +1,22 @@
 module Mastermind
   class Provider
-    include Mixin
+    include Mixin::Attributes
+    include Mixin::Providers
 
     provider_name :default
     actions :nothing
-    
-    default_action :nothing
-    
-    attribute :name, :type => :string
-    
-    def initialize(options={})
-      attributes_init(options)
-    end
-
-    def nothing
-      puts "Nothing happened."
-    end
-    
-    def task_list(value=nil)
-      set_or_get(:task_list, value)
-    end
+        
+    attribute :name, String
     
     def self.find_by_name(name)
-      Mastermind::Registry.list[name]
+      Mastermind::Registry.providers[name]
     end
     
     def execute
-      run_validations
+      # run_validations
       self.send(self.action)
     end
 
   end
 end
-
 
