@@ -6,6 +6,7 @@ module Mastermind
   module Mixin
     module Attributes
       extend ActiveSupport::Concern
+      include ActiveModel::Validations
       
       included do
         extend ActiveSupport::DescendantsTracker
@@ -27,6 +28,7 @@ module Mastermind
             attributes[attribute.name] = attribute
             create_accessors_for(attribute)
             create_attribute_in_descendants(*args)
+            create_validations_for(attribute)
           end
         end
         
@@ -67,7 +69,7 @@ module Mastermind
             end
             
             def #{attribute.name}?
-              instance_variable_get("@{attribute.name}").present?
+              instance_variable_get("@#{attribute.name}").present?
             end
           EVAL
           
@@ -76,6 +78,43 @@ module Mastermind
           
         def create_attribute_in_descendants(*args)
           descendants.each {|descendant| descendant.attribute(*args) }
+        end
+        
+        def create_validations_for(attribute)
+          name = attribute.name
+          
+          if attribute.options[:required]
+            validates_presence_of(name)
+          end
+          
+          if attribute.options[:numeric]
+            number_options = attribute.type == Integer ? {:only_integer => true} : {}
+            validates_numericality_of(name, number_options)
+          end
+          
+          if attribute.options[:format]
+            validates_format_of(name, :with => attribute.options[:format])
+          end
+          
+          if attribute.options[:in]
+            validates_inclusion_of(name, :in => attribute.options[:in])
+          end
+          
+          if attribute.options[:not_in]
+            validates_exclusion_of(name, :in => attribute.options[:not_in])
+          end
+          
+          if attribute.options[:length]
+            length_options = case attribute.type
+            when Integer
+              {:minimum => 0, :maximum => key.options[:length]}
+            when Range
+              {:within => key.options[:length]}
+            when Hash
+              key.options[:length]
+            end
+            validates_length_of(name, length_options)
+          end
         end
               
       end
@@ -157,6 +196,26 @@ module Mastermind
           instance_variable_set(:"@#{name}", attribute.set(value))
         end
         
+        # def requires(*args)
+        #   missing = missing_attributes(args)
+        #   if missing.length == 1
+        #     raise(ArgumentError, "#{missing.first} is required for this operation")
+        #   elsif missing.any?
+        #     raise(ArgumentError, "#{missing[0...-1].join(", ")} and #{missing[-1]} are required for this operation")
+        #   end
+        # end
+        # 
+        # def missing_attributes(*args)
+        #   missing = []
+        #   for arg in args
+        #     unless send("#{arg}") || attributes.has_key?(arg)
+        #       missing << arg
+        #     end
+        #   end
+        #   missing
+        # end
+
+
       end # InstanceMethods
       
     end

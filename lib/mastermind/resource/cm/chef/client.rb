@@ -5,7 +5,7 @@ module Mastermind
         class Client < Chef
           
           resource_name :chef_client
-          provider :chef
+          provider_name :chef
 
         end
       end

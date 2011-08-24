@@ -3,11 +3,16 @@ module Mastermind
     include Mixin::Attributes
     include Mixin::Providers
 
-    provider_name :default
+    attr_accessor :new_resource
     
+    provider_name :default
     actions :nothing
-        
+    
     attribute :name, String
+    
+    def initialize(new_resource)
+      @new_resource = new_resource
+    end
     
     def self.find_by_name(name)
       Mastermind::Registry.providers[name]

@@ -7,13 +7,13 @@ module Mastermind
       extend ActiveSupport::Concern
       
       included do
-        # extend ActiveSupport::DescendantsTracker
+        extend ActiveSupport::DescendantsTracker
       end
       
       module ClassMethods
-        def provider_name(name=nil)
-          @provider_name = name if !name.nil?
-          Mastermind::Registry.providers[@provider_name.to_sym] = self
+        def provider_name(provider_name=nil)
+          @provider_name = provider_name.to_sym if !provider_name.nil?
+          Mastermind::Registry.providers[@provider_name] = self
           return @provider_name
         end
         

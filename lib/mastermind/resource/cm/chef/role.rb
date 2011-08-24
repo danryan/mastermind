@@ -5,7 +5,7 @@ module Mastermind
         class Role < Chef
           
           resource_name :chef_role
-          provider :chef
+          provider_name :chef
 
         end
       end

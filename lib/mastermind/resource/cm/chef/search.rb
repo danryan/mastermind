@@ -5,7 +5,7 @@ module Mastermind
         class Search < Chef
           
           resource_name :chef_search
-          provider :chef
+          provider_name :chef
 
         end
       end

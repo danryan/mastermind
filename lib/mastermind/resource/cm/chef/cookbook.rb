@@ -5,7 +5,7 @@ module Mastermind
         class Environment < Chef
           
           resource_name :chef_environment
-          provider :chef
+          provider_name :chef
 
         end
       end

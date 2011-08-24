@@ -2,14 +2,30 @@ require 'fog'
 
 module Mastermind
   class Provider
-    class EC2
-      class Server < EC2
+    class Server
+      class EC2 < Server
 
-        provider_name :ec2
+        provider_name :ec2_server
         actions :create, :destroy, :stop, :start, :terminate
         
-        def create
-          puts "Create!"
+        attribute :default_action, Symbol, :default => :create
+        
+        def create          
+          fog = Fog::Compute.new(
+            :provider => 'AWS',
+            :aws_access_key_id => new_resource.access_key_id,
+            :aws_secret_access_key => new_resource.secret_access_key
+          )
+          server = fog.servers.create(
+            :image_id => new_resource.image_id,
+            :flavor_id => new_resource.flavor_id,
+            :groups => new_resource.groups,
+            :key_name => new_resource.key_name,
+            :availability_zone => new_resource.availability_zone
+          )
+          server.wait_for { ready? }
+          new_resource.update(server.attributes)
+          return new_resource
         end
 
         def destroy

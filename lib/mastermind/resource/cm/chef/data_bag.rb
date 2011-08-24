@@ -5,7 +5,7 @@ module Mastermind
         class DataBag < Chef
           
           resource_name :chef_data_bag
-          provider :chef
+          provider_name :chef
 
         end
       end

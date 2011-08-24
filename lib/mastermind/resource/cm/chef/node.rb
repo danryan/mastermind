@@ -5,7 +5,7 @@ module Mastermind
         class Node < Chef
           
           resource_name :chef_node
-          provider :chef
+          provider_name :chef
 
         end
       end
