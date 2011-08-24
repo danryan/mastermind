@@ -3,5 +3,5 @@
 Gemfile.lock
 pkg/*
 doc
-examples/ec2.rb
+examples/
 
