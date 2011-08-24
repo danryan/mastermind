@@ -1,3 +1,33 @@
+We need more than "ssh-in-a-for-loop" orchestration. Our infrastructure get more complex every day and we need a tool that can choreograph an intricate dance of services, servers and commands in a easily manageable way.
+
+## Providers
+
+So far this list is incomplete and not fully implemented, but it does show the list of expected resources that Mastermind will be able to orchestrate once it's ready for primetime (with more to follow as requirements dictate).
+
+### Servers
+
+* EC2
+* Rackspace
+* Linode
+
+### DNS
+
+* Route53
+* DNSimple
+* Dynect
+* Linode
+
+### Configuration Management
+
+* Puppet
+* Chef
+
+### Remote
+
+* SSH
+* HTTP
+* XMPP
+
 ## Usage
 
     ./bin/mastermind <plot_file_path>
