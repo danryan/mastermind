@@ -4,6 +4,7 @@ module Mastermind
     include Mixin::Providers
 
     provider_name :default
+    
     actions :nothing
         
     attribute :name, String

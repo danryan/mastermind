@@ -17,9 +17,9 @@ module Mastermind
           return @resource_name
         end
         
-        def providers(*args)
-          @providers = args if !args.blank?
-          return @providers
+        def provider(provider)
+          @provider = provider if !args.blank?
+          return @provider
         end
         
         def find_by_name(name)
