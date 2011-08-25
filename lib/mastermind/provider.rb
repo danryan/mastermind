@@ -19,13 +19,12 @@ module Mastermind
     end
     
     def execute
-      # run_validations
       self.send(self.action)
     end
     
-    # def to_s
-      # "provider[#{@provider_name}]"
-    # end
+    def to_s
+      "provider[#{provider_name}]"
+    end
   end
 end
 

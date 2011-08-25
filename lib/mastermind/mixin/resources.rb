@@ -51,6 +51,23 @@ module Mastermind
         def resource_name
           self.class.resource_name
         end
+        
+        def execute_only_if(cmd, args={})
+          res = cmd.call
+          unless res
+            return false
+          end
+          true
+        end
+
+        def execute_not_if(cmd, args={})
+          res = cmd.call
+          if res
+            return false
+          end
+          true
+        end
+        
       end
     
     end

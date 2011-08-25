@@ -25,49 +25,36 @@ module Mastermind
         begin
           if only_if
             unless execute_only_if(only_if, only_if_args)
-              Mastermind::Log.error "Skipping #{self} due to only_if"
+              Mastermind::Log.info "Skipping #{self} due to only_if"
               return
             end
           end
           
           if not_if
             unless execute_not_if(not_if, not_if_args)
-              Mastermind::Log.error "Skipping #{self} due to not_if"
+              Mastermind::Log.info "Skipping #{self} due to not_if"
               return
             end
           end
           
           provider = self.class.provider.new(self)
           provider.send(action)
-          success.call
+          if success
+            success.call
+          end
           @successful = true
         rescue => e
           Mastermind::Log.error e.inspect
-          failure.call
+          if failure
+            failure.call
+          end
           @successful = false
         end
         
       else
         Mastermind::Log.error self.errors.full_messages.join(", ")
-        # return false
         raise ValidationError, self.errors.full_messages.join(", ")
       end
-    end
-          
-    def execute_only_if(cmd, args={})
-      res = cmd.call
-      unless res
-        return false
-      end
-      true
-    end
-    
-    def execute_not_if(cmd, args={})
-      res = cmd.call
-      if res
-        return false
-      end
-      true
     end
     
     def success(&block)
@@ -102,6 +89,9 @@ module Mastermind
       return @only_if
     end
     
+    def to_s
+      "#{resource_name}[#{name}]"
+    end
   end
 end
 
