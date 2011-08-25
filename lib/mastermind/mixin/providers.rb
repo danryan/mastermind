@@ -28,6 +28,9 @@ module Mastermind
       end
       
       module InstanceMethods
+        def provider_name
+          self.class.provider_name
+        end
       end
     
     end

@@ -1,4 +1,5 @@
 require 'mastermind/version'
+require 'mastermind/log'
 require 'mastermind/mixin/attributes'
 require 'mastermind/mixin/resources'
 require 'mastermind/mixin/providers'

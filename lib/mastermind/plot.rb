@@ -3,8 +3,8 @@ module Mastermind
     
     attr_accessor :name, :tasks
     
-    def initialize(name, &block)
-      @name = name
+    def initialize(&block)
+      @name = nil
       @tasks = TaskList.new
       if block_given?
         if block.arity == 1
@@ -25,8 +25,17 @@ module Mastermind
     #   end
     # end
     
+    def name(value=nil)
+      @name = value if !value.nil?
+      return @value
+    end
+    
     def execute(resource, action)
       resource.execute(action)
+    end
+    
+    def self.dsl_method(name, resource, &block)
+      dsl_method(name, resource, &block)
     end
     
     def dsl_method(name, resource, &block)

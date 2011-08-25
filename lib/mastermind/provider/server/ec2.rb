@@ -13,8 +13,8 @@ module Mastermind
         def create          
           fog = Fog::Compute.new(
             :provider => 'AWS',
-            :aws_access_key_id => new_resource.access_key_id,
-            :aws_secret_access_key => new_resource.secret_access_key
+            :aws_access_key_id => new_resource.aws_access_key_id,
+            :aws_secret_access_key => new_resource.aws_secret_access_key
           )
           server = fog.servers.create(
             :image_id => new_resource.image_id,

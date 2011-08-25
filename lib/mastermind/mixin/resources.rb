@@ -47,6 +47,10 @@ module Mastermind
           @default_action = self.class.default_action if !action.nil?
           return @default_action
         end
+        
+        def resource_name
+          self.class.resource_name
+        end
       end
     
     end

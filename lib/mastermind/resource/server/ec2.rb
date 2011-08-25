@@ -7,8 +7,8 @@ module Mastermind
         provider_name :ec2_server
         default_action :create
         
-        attribute :access_key_id, String, :required => true
-        attribute :secret_access_key, String, :required => true
+        attribute :aws_access_key_id, String, :required => true
+        attribute :aws_secret_access_key, String, :required => true
         attribute :image_id, String
         attribute :key_name, String
         attribute :ami_launch_index, Numeric
