@@ -9,14 +9,14 @@ module Mastermind
     
     attribute :action, Symbol
     attribute :name, String, :required => true
+    attribute :not_if, Proc
+    attribute :only_if, Proc
+    attribute :success, Proc
+    attribute :failure, Proc
     
     default_action :nothing
         
     def initialize(args={})
-      @not_if = nil
-      @not_if_args = {}
-      @only_if = nil
-      @only_if_args = {}
       super(args)
     end
     
@@ -24,15 +24,15 @@ module Mastermind
       if self.valid?
         begin
           if only_if
-            unless execute_only_if(only_if, only_if_args)
-              Mastermind::Log.info "Skipping #{self} due to only_if"
+            unless execute_only_if(only_if)
+              Mastermind::Log.error "Skipping #{self} due to only_if"
               return
             end
           end
           
           if not_if
-            unless execute_not_if(not_if, not_if_args)
-              Mastermind::Log.info "Skipping #{self} due to not_if"
+            unless execute_not_if(not_if)
+              Mastermind::Log.error "Skipping #{self} due to not_if"
               return
             end
           end
@@ -57,39 +57,6 @@ module Mastermind
         Mastermind::Log.error self.errors.full_messages.join(", ")
         raise ValidationError, self.errors.full_messages.join(", ")
       end
-    end
-    
-    def success(&block)
-      @success = block if block_given?
-      return @success
-    end
-    
-    def failure(&block)
-      @failure = block if block_given?
-      return @failure
-    end
-
-    # not_if / only_if lovingly stolen from Chef. <3 Opscode cowboys.
-    def not_if(arg=nil, args={}, &block)
-      if block_given?
-        @not_if = block
-        @not_if_args = args
-      else
-        @not_if = arg if arg
-        @not_if_args = args
-      end
-      return @not_if
-    end
-    
-    def only_if(arg=nil, args={}, &block)
-      if block_given?
-        @only_if = block
-        @only_if_args = args
-      else
-        @only_if = arg if arg
-        @only_if_args = args
-      end
-      return @only_if
     end
     
     def to_s

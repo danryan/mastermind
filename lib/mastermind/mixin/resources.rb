@@ -52,16 +52,16 @@ module Mastermind
           self.class.resource_name
         end
         
-        def execute_only_if(cmd, args={})
-          res = cmd.call
+        def execute_only_if(only_if)
+          res = only_if.call
           unless res
             return false
           end
           true
         end
 
-        def execute_not_if(cmd, args={})
-          res = cmd.call
+        def execute_not_if(not_if)
+          res = not_if.call
           if res
             return false
           end

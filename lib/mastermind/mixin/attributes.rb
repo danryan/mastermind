@@ -56,16 +56,23 @@ module Mastermind
         
         def create_accessors_for(attribute)
           accessors_module.module_eval <<-EVAL
-            def #{attribute.name}(value=nil)
-              if value
+            def #{attribute.name}(value=nil, &block)
+              if !value.nil?
                 instance_variable_set("@#{attribute.name}", value)
+              elsif !block.nil?
+                instance_variable_set("@#{attribute.name}", block)
               else
                 instance_variable_get("@#{attribute.name}")
               end
             end
             
-            def #{attribute.name}=(value)
-              instance_variable_set("@#{attribute.name}", value)
+            def #{attribute.name}=(value, &block)
+              if !value.nil?
+                instance_variable_set("@#{attribute.name}", value)
+              elsif !block.nil?
+                instance_variable_set("@#{attribute.name}", block)
+              end
+                
             end
             
             def #{attribute.name}?
