@@ -47,6 +47,8 @@ module Mastermind
           Mastermind::Log.error e.inspect
           if failure
             failure.call
+          else
+            raise e.exception
           end
           @successful = false
         end
