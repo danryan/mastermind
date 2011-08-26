@@ -67,6 +67,7 @@ module Mastermind
       return @failure
     end
 
+    # not_if / only_if lovingly stolen from Chef. <3 Opscode cowboys.
     def not_if(arg=nil, args={}, &block)
       if block_given?
         @not_if = block
