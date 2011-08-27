@@ -4,7 +4,7 @@ module Mastermind
       extend ActiveSupport::Concern
       
       include ::ActiveModel::Validations
-      include ::ActiveMOdel::Validations::Callbacks
+      include ::ActiveModel::Validations::Callbacks
       
       module ClassMethods
         

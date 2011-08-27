@@ -29,6 +29,10 @@ module Mastermind
             create_accessors_for(attribute)
             create_attribute_in_descendants(*args)
             create_validations_for(attribute)
+            # define_method("#{attribute.name}") do |value, &block|
+            #   if !value.nil?
+            #     instance_variable_set
+            # end
           end
         end
         
@@ -121,7 +125,8 @@ module Mastermind
               key.options[:length]
             end
             validates_length_of(name, length_options)
-          end
+          end          
+          
         end
               
       end
@@ -203,26 +208,6 @@ module Mastermind
           instance_variable_set(:"@#{name}", attribute.set(value))
         end
         
-        # def requires(*args)
-        #   missing = missing_attributes(args)
-        #   if missing.length == 1
-        #     raise(ArgumentError, "#{missing.first} is required for this operation")
-        #   elsif missing.any?
-        #     raise(ArgumentError, "#{missing[0...-1].join(", ")} and #{missing[-1]} are required for this operation")
-        #   end
-        # end
-        # 
-        # def missing_attributes(*args)
-        #   missing = []
-        #   for arg in args
-        #     unless send("#{arg}") || attributes.has_key?(arg)
-        #       missing << arg
-        #     end
-        #   end
-        #   missing
-        # end
-
-
       end # InstanceMethods
       
     end

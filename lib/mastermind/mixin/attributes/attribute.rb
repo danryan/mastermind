@@ -20,17 +20,21 @@ module Mastermind
         end
         
         def get(value)
-          if value.nil? && !default.nil?
-            if default.respond_to?(:call)
-              return default.call
+          if value.nil? && !default_value.nil?
+            if default_value.respond_to?(:call)
+              return default_value.call
             else
-              return Marshal.load(Marshal.dump(default))
+              return Marshal.load(Marshal.dump(default_value))
             end
           end
           
         end
         
         def set(value)
+          # TODO  value.instance_of?(type)
+          value.tap do |values|
+            values.map! { |v| v }
+          end
         end
       end
     end

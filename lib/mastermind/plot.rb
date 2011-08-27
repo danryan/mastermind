@@ -43,6 +43,7 @@ module Mastermind
       new_resource.name = name
       new_resource.action ||= new_resource.default_action
       new_resource.instance_eval(&block)
+      tasks << new_resource
       execute(new_resource, new_resource.action)
     end
     
