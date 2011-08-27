@@ -12,7 +12,7 @@ module Mastermind
         end
       
         def ==(other)
-          @name == other.name && @type == other.type
+          name == other.name && type == other.type
         end
       
         def number?
@@ -27,16 +27,20 @@ module Mastermind
               return Marshal.load(Marshal.dump(default_value))
             end
           end
-          
+          value
         end
         
         def set(value)
-          # TODO  value.instance_of?(type)
-          value.tap do |values|
-            values.map! { |v| v }
-          end
+          # puts value.inspect
+          # puts self.inspect
+          # unless value.class == type
+            # raise ValidationError, "#{name} must be a type of #{type}"
+          # end
+          value
         end
       end
+      
+      class ValidationError < ArgumentError; end
     end
   end
 end

@@ -25,67 +25,18 @@ module Mastermind
         
         def attribute(*args)
           Attribute.new(*args).tap do |attribute|
-            attributes[attribute.name] = attribute
-            create_accessors_for(attribute)
+            attributes[attribute.name.to_sym] = attribute
             create_attribute_in_descendants(*args)
             create_validations_for(attribute)
-            # define_method("#{attribute.name}") do |value, &block|
-            #   if !value.nil?
-            #     instance_variable_set
-            # end
           end
+          
         end
         
         def attribute?(attribute)
-          attributes.keys.include?(attribute.to_s)
+          attributes.keys.include?(attribute)
         end
         
         private
-                  
-        def attribute_accessors_module_defined?
-          if method(:const_defined?).arity == 1
-            const_defined?('MastermindAttributes')
-          else
-            const_defined?('MastermindAttributes', false)
-          end
-        end
-        
-        def accessors_module
-          if attribute_accessors_module_defined?
-            const_get 'MastermindAttributes'
-          else
-            const_set 'MastermindAttributes', Module.new
-          end
-        end
-        
-        def create_accessors_for(attribute)
-          accessors_module.module_eval <<-EVAL
-            def #{attribute.name}(value=nil, &block)
-              if !value.nil?
-                instance_variable_set("@#{attribute.name}", value)
-              elsif !block.nil?
-                instance_variable_set("@#{attribute.name}", block)
-              else
-                instance_variable_get("@#{attribute.name}")
-              end
-            end
-            
-            def #{attribute.name}=(value, &block)
-              if !value.nil?
-                instance_variable_set("@#{attribute.name}", value)
-              elsif !block.nil?
-                instance_variable_set("@#{attribute.name}", block)
-              end
-                
-            end
-            
-            def #{attribute.name}?
-              instance_variable_get("@#{attribute.name}").present?
-            end
-          EVAL
-          
-          include accessors_module
-        end
           
         def create_attribute_in_descendants(*args)
           descendants.each {|descendant| descendant.attribute(*args) }
@@ -134,16 +85,29 @@ module Mastermind
       module InstanceMethods
         def initialize(attrs={})
           assign(attrs)
+          self.class.attributes.each_pair do |key, attribute|
+            (class << self; self; end).class_eval do
+              define_method(attribute.name) do |*value, &block|
+                if !block.nil?
+                  write_attribute(attribute.name, block)
+                elsif !value.blank?
+                  write_attribute(attribute.name, value.first)
+                else
+                  read_attribute(attribute.name)
+                end
+              end
+            end
+          end
         end
         
         def options=(attrs)
           return if attrs.blank?
 
           attrs.each_pair do |key, value|
-            if respond_to?(:"#{key}=")
-              self.send(:"#{key}=", value)
+            if respond_to?(:"#{key}")
+              write_attribute(key, value)
             else
-              self[key] = value
+              self[key.to_sym] = value
             end
           end
         end
@@ -151,8 +115,8 @@ module Mastermind
         def options
           HashWithIndifferentAccess.new.tap do |attrs|
             attributes.select { |name, attr| !self[attr.name].nil? }.each do |name, attr|
-              value = attr.set(self[attr.name])
-              attrs[name] = value
+              value = attr.set(self[attr.name.to_sym])
+              attrs[name.to_sym] = value
             end
           end
         end
@@ -193,18 +157,18 @@ module Mastermind
         private
         
         def ensure_attribute_exists(name)
-          self.class.attribute(name) unless respond_to?("#{name}=")
+          self.class.attribute(name) unless respond_to?("#{name}")
         end
         
         def read_attribute(name)
-          if attribute = attributes[name.to_s]
+          if attribute = attributes[name.to_sym]
             value = attribute.get(instance_variable_get(:"@#{name}"))
             instance_variable_set(:"@#{name}", value)
           end
         end
         
         def write_attribute(name, value)
-          attribute = attributes[name.to_s]
+          attribute = attributes[name.to_sym]
           instance_variable_set(:"@#{name}", attribute.set(value))
         end
         
