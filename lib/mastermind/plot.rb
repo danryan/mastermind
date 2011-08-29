@@ -5,7 +5,7 @@ module Mastermind
     attribute :name, String
     attribute :tasks, Array, :default => []
     
-    def initialize(args, &block)
+    def initialize(attrs={}, &block)
       # @tasks = T
       if block_given?
         if block.arity == 1
@@ -14,7 +14,7 @@ module Mastermind
           instance_eval &block
         end
       end
-      super(args)
+      super(attrs)
     end
 
     def execute
