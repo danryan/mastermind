@@ -33,7 +33,6 @@ module Mastermind
         end
 
         def destroy
-          puts connection.inspect
           puts "Destroy!"
         end
 
