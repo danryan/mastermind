@@ -7,7 +7,7 @@ module Mastermind
     attr_reader :not_if_args
     attr_reader :only_if_args
     
-    attribute :action, Symbol #, :default => lambda { default_actiion }
+    attribute :action, Symbol #, :default => lambda { default_action }
     attribute :name, String, :required => true
     attribute :not_if, Proc
     attribute :only_if, Proc
@@ -15,6 +15,7 @@ module Mastermind
     attribute :failure, Proc
     # attribute :default_action, Symbol, :default => :nothing
     
+    resource_name :default
     default_action :nothing
         
     def initialize(args={})
