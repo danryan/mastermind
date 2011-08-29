@@ -39,7 +39,20 @@ module Mastermind
         attribute :tenancy, String
         attribute :tags, Hash
         attribute :user_data, String
+        
+        module DSL
+          def ec2_server(name, &block)
+            dsl_method(name, Mastermind::Resource::Server::EC2, &block)
+          end
+        end
+        
       end
     end
   end
+end
+
+require 'mastermind/plot'
+
+class Mastermind::Plot
+  include Mastermind::Resource::Server::EC2::DSL
 end

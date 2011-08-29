@@ -7,12 +7,13 @@ module Mastermind
     attr_reader :not_if_args
     attr_reader :only_if_args
     
-    attribute :action, Symbol
+    attribute :action, Symbol #, :default => lambda { default_actiion }
     attribute :name, String, :required => true
     attribute :not_if, Proc
     attribute :only_if, Proc
     attribute :success, Proc
     attribute :failure, Proc
+    # attribute :default_action, Symbol, :default => :nothing
     
     default_action :nothing
         
@@ -62,6 +63,7 @@ module Mastermind
     def to_s
       "#{resource_name}[#{name}]"
     end
+    
   end
 end
 

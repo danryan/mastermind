@@ -1,5 +1,5 @@
 module Mastermind
-  class Registry
+  module Registry
     @providers = Hash.new
     @resources = Hash.new
     

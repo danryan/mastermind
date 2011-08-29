@@ -1,11 +1,12 @@
 module Mastermind
   class Plot
+    include Mixin::Attributes
     
-    attr_accessor :name, :tasks
+    attribute :name, String
+    attribute :tasks, Array, :default => []
     
-    def initialize(&block)
-      @name = nil
-      @tasks = TaskList.new
+    def initialize(args, &block)
+      # @tasks = T
       if block_given?
         if block.arity == 1
           yield self
@@ -13,42 +14,21 @@ module Mastermind
           instance_eval &block
         end
       end
+      super(args)
+    end
+
+    def execute
+      tasks.each do |task|
+        task.execute(task.action)
+      end
     end
     
-    def tasks
-      @tasks
-    end
-    
-    # def execute
-    #   tasks.each do |task|
-    #     task.execute
-    #   end
-    # end
-    
-    def name(value=nil)
-      @name = value if !value.nil?
-      return @value
-    end
-    
-    def execute(resource, action)
-      resource.execute(action)
-    end
-    
-    def self.dsl_method(name, resource, &block)
-      dsl_method(name, resource, &block)
-    end
-    
-    def dsl_method(name, resource, &block)
-      new_resource = resource.new
-      new_resource.name = name
-      new_resource.action ||= new_resource.default_action
-      new_resource.instance_eval(&block)
-      tasks << new_resource
-      execute(new_resource, new_resource.action)
-    end
-    
-    def ec2_server(name, &block)
-      dsl_method(name, Mastermind::Resource::Server::EC2, &block)
+    def dsl_method(name, klass, &block)
+      resource = klass.new
+      resource.name name
+      resource.action (resource.action ? resource.action : klass.default_action)
+      resource.instance_eval(&block)
+      tasks << resource
     end
     
     def dns_zone_route53(name, &block)

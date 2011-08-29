@@ -35,6 +35,15 @@ module Mastermind
         def find_by_name(name)
           Mastermind::Registry.resources[name]
         end
+        
+        def dsl_method(name, resource, &block)
+          new_resource = resource.new
+          new_resource.name name
+          new_resource.action ( new_resource.action || new_resource.default_action)
+          new_resource.instance_eval(&block)
+          tasks << new_resource
+          # execute(new_resource, new_resource.action)
+        end
       end
       
       module InstanceMethods

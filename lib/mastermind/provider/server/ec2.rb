@@ -10,13 +10,17 @@ module Mastermind
         
         attribute :default_action, Symbol, :default => :create
         
-        def create          
-          fog = Fog::Compute.new(
+        def connection
+          Fog::Compute.new(
             :provider => 'AWS',
             :aws_access_key_id => new_resource.aws_access_key_id,
             :aws_secret_access_key => new_resource.aws_secret_access_key
           )
-          server = fog.servers.create(
+        end
+        
+        def create          
+          
+          server = connection.servers.create(
             :image_id => new_resource.image_id,
             :flavor_id => new_resource.flavor_id,
             :groups => new_resource.groups,
@@ -29,6 +33,7 @@ module Mastermind
         end
 
         def destroy
+          puts connection.inspect
           puts "Destroy!"
         end
 

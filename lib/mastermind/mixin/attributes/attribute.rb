@@ -8,7 +8,7 @@ module Mastermind
           options = args.extract_options!
           @name, @type = args.shift.to_s, args.shift
           self.options = (options || {}).symbolize_keys
-          self.default_value = self.options.delete(:default)
+          self.default_value = self.options[:default]
         end
       
         def ==(other)
@@ -31,11 +31,9 @@ module Mastermind
         end
         
         def set(value)
-          # puts value.inspect
-          # puts self.inspect
-          # unless value.class == type
-            # raise ValidationError, "#{name} must be a type of #{type}"
-          # end
+          if !type.nil? && !value.kind_of?(type)
+            raise ValidationError, "#{name} must be an instance of #{type}"
+          end
           value
         end
       end

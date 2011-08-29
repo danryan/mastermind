@@ -84,7 +84,6 @@ module Mastermind
       
       module InstanceMethods
         def initialize(attrs={})
-          assign(attrs)
           self.class.attributes.each_pair do |key, attribute|
             (class << self; self; end).class_eval do
               define_method(attribute.name) do |*value, &block|
@@ -98,6 +97,8 @@ module Mastermind
               end
             end
           end
+          assign(attrs)
+          
         end
         
         def options=(attrs)
