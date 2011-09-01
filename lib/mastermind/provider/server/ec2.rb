@@ -7,9 +7,7 @@ module Mastermind
 
         provider_name :ec2_server
         actions :create, :destroy, :stop, :start, :terminate
-        
-        attribute :default_action, Symbol, :default => :create
-        
+
         def connection
           Fog::Compute.new(
             :provider => 'AWS',
@@ -19,7 +17,7 @@ module Mastermind
         end
         
         def create          
-          
+          requires :image_id, :flavor_id, :key_name, :availability_zone, :groups
           server = connection.servers.create(
             :image_id => new_resource.image_id,
             :flavor_id => new_resource.flavor_id,
@@ -33,6 +31,8 @@ module Mastermind
         end
 
         def destroy
+          requires :instance_id
+          
           puts "Destroy!"
         end
 
