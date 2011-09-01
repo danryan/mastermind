@@ -31,6 +31,22 @@ module Mastermind
         def provider_name
           self.class.provider_name
         end
+        
+        def requires(*args)
+          missing = []
+          args.each do |arg|
+            unless new_resource.send("#{arg}") || new_resource.options.has_key?(arg)
+              missing << arg
+            end
+          end
+          puts missing.inspect
+          if missing.length == 1
+            raise(ArgumentError, "#{missing.first} is required for this operation")
+          elsif missing.any?
+            raise(ArgumentError, "#{missing[0...-1].join(", ")} and #{missing[-1]} are required for this operation")
+          end
+          
+        end
       end
     
     end
