@@ -6,7 +6,6 @@ module Mastermind
     attribute :tasks, Array, :default => []
     
     def initialize(attrs={}, &block)
-      # @tasks = T
       if block_given?
         if block.arity == 1
           yield self
