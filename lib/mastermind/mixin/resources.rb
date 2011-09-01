@@ -47,8 +47,8 @@ module Mastermind
       end
       
       module InstanceMethods
-        def provider(name=nil)
-          @provider = self.class.provider if !name.nil?
+        def provider
+          @provider = self.class.provider
           return @provider
         end
         
@@ -58,11 +58,17 @@ module Mastermind
         end
         
         def resource_name
-          self.class.resource_name
+          @resource_name = self.class.resource_name
+          return @resource_name
+        end
+        
+        def provider_name
+          @provider_name = self.class.provider_name
+          return @provider_name
         end
         
         def execute_only_if(only_if)
-          res = only_if.call
+          res = instance_eval { only_if.call }
           unless res
             return false
           end
@@ -70,13 +76,13 @@ module Mastermind
         end
 
         def execute_not_if(not_if)
-          res = not_if.call
+          res = instance_eval { not_if.call }
           if res
             return false
           end
           true
         end
-        
+      
       end
     
     end
