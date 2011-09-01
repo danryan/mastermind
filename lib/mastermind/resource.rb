@@ -7,13 +7,12 @@ module Mastermind
     attr_reader :not_if_args
     attr_reader :only_if_args
     
-    attribute :action, Symbol #, :default => lambda { default_action }
+    attribute :action, Symbol
     attribute :name, String, :required => true
     attribute :not_if, Proc
     attribute :only_if, Proc
     attribute :success, Proc
     attribute :failure, Proc
-    # attribute :default_action, Symbol, :default => :nothing
     
     resource_name :default
     default_action :nothing
@@ -22,7 +21,7 @@ module Mastermind
       super(args)
     end
     
-    def execute(action)
+    def execute(action=nil)
       if self.valid?
         begin
           if only_if
@@ -40,15 +39,15 @@ module Mastermind
           end
           
           provider = self.class.provider.new(self)
-          provider.send(action)
+          provider.send(action || self.class.default_action)
           if success
-            success.call
+            instance_eval { success.call }
           end
           @successful = true
         rescue => e
           Mastermind::Log.error e.inspect
           if failure
-            failure.call
+            instance_eval { failure.call }
           else
             raise e.exception
           end
@@ -65,6 +64,9 @@ module Mastermind
       "#{resource_name}[#{name}]"
     end
     
+    def inspect
+      %Q{<Resource name: #{resource_name}, #{options.map {|a| "#{a[0]}: #{a[1]}"}.join(", ")}>}
+    end
   end
 end
 
