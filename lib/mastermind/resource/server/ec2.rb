@@ -12,8 +12,8 @@ module Mastermind
         attribute :image_id, String
         attribute :key_name, String
         attribute :ami_launch_index, Numeric
-        attribute :availability_zone, String
-        attribute :region, String
+        attribute :availability_zone, String, :default => 'us-east-1a'
+        attribute :region, String, :default => 'us-east-1'
         attribute :block_device_mapping, Array
         attribute :client_token, String
         attribute :dns_name, String
