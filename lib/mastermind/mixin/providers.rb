@@ -39,7 +39,6 @@ module Mastermind
               missing << arg
             end
           end
-          puts missing.inspect
           if missing.length == 1
             raise(ArgumentError, "#{missing.first} is required for this operation")
           elsif missing.any?
