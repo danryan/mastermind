@@ -4,6 +4,6 @@ module Mastermind
   class Log
     extend Mixlib::Log
     
-    init
+    # init
   end 
 end

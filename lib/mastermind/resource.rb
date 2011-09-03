@@ -11,8 +11,9 @@ module Mastermind
     attribute :name, String, :required => true
     attribute :not_if, Proc
     attribute :only_if, Proc
-    attribute :success, Proc
-    attribute :failure, Proc
+    attribute :on_success, Proc
+    attribute :on_failure, Proc
+    # attribute :ignore_failure, [ TrueClass, FalseClass ], :default => false
     
     resource_name :default
     default_action :nothing
@@ -26,29 +27,31 @@ module Mastermind
         begin
           if only_if
             unless execute_only_if(only_if)
-              Mastermind::Log.error "Skipping #{self} due to only_if"
+              Mastermind::Log.debug "Skipping #{self} due to only_if"
               return
             end
           end
           
           if not_if
             unless execute_not_if(not_if)
-              Mastermind::Log.error "Skipping #{self} due to not_if"
+              Mastermind::Log.debug "Skipping #{self} due to not_if"
               return
             end
           end
           
           provider = self.class.provider.new(self)
           provider.send(action || self.class.default_action)
-          if success
-            instance_eval { success.call }
+          if on_success
+            Mastermind::Log.debug "Action succeeded. Executing success callback"
+            instance_eval { on_success.call }
           end
-          @successful = true
         rescue => e
           Mastermind::Log.error e.inspect
-          if failure
-            instance_eval { failure.call }
+          if on_failure
+            Mastermind::Log.debug "Action failed. Executing failure callback"
+            instance_eval { on_failure.call }
           else
+            Mastermind::Log.error e.inspect
             raise e.exception
           end
           @successful = false
@@ -65,7 +68,7 @@ module Mastermind
     end
     
     def inspect
-      %Q{<Resource name: #{resource_name}, #{options.map {|a| "#{a[0]}: #{a[1]}"}.join(", ")}>}
+      %Q{Resource[#{resource_name}] #{options.map {|a| "#{a[0]}: #{a[1]}"}.join(", ")}>}
     end
   end
 end
