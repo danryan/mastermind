@@ -21,8 +21,8 @@ module Mastermind
         attribute :flavor_id, String
         attribute :instance_id, String
         attribute :kernel_id, String
-        attribute :created_at, DateTime
-        attribute :monitoring, String
+        attribute :created_at #, [DateTime, Time]
+        attribute :monitoring, [ TrueClass, FalseClass ], :default => false
         attribute :placement_group, String
         attribute :platform, String
         attribute :product_codes, Array
@@ -34,25 +34,13 @@ module Mastermind
         attribute :root_device_name, String
         attribute :root_device_type, String
         attribute :state, String
-        attribute :state_reason, String
+        attribute :state_reason, Hash
         attribute :subnet_id, String
         attribute :tenancy, String
         attribute :tags, Hash
         attribute :user_data, String
         
-        module DSL
-          def ec2_server(name, &block)
-            dsl_method(name, Mastermind::Resource::Server::EC2, &block)
-          end
-        end
-        
       end
     end
   end
-end
-
-require 'mastermind/plot'
-
-class Mastermind::Plot
-  include Mastermind::Resource::Server::EC2::DSL
 end

@@ -1,6 +1,6 @@
 module Mastermind
   class Plot
-    include Mixin::Attributes
+    include Mastermind::Mixin::Attributes
     
     attribute :name, String
     attribute :tasks, Array, :default => []
@@ -13,6 +13,13 @@ module Mastermind
           instance_eval &block
         end
       end
+      Mastermind::Registry.resources.each_pair do |key, value|
+        class_eval do
+          define_method key do |name, &block|
+            dsl_method(name, value, &block)
+          end
+        end
+      end
       super(attrs)
     end
 
@@ -23,15 +30,14 @@ module Mastermind
     end
     
     def dsl_method(name, klass, &block)
-      resource = klass.new
+      resource = klass.new rescue Mastermind::Resource.new
       resource.name name
       resource.action (resource.action ? resource.action : klass.default_action)
-      resource.instance_eval(&block)
+      if block_given?
+        resource.instance_eval(&block)
+      end
       tasks << resource
     end
     
-    def dns_zone_route53(name, &block)
-      dsl_method(name, Mastermind::Resource::DNS::Zone::Route53, &block)
-    end
   end
 end
