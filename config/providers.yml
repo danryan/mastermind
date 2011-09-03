@@ -1,7 +1,0 @@
-aws:
-  access_key_id:
-  secret_access_key:
-chef:
-  server:
-  client_name:
-  key_file:
