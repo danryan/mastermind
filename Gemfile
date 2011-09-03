@@ -4,6 +4,7 @@ gemspec
 
 group :development, :test do
   gem 'rspec', '>= 2.6.0'
+  gem 'rack-test', '>= 0.6.0', :require => 'rack/test'
   gem 'spork', '>= 0.9.0.rc8'
   gem 'guard', '>= 0.6.2'
   gem 'guard-rspec', '>= 0.4.2'
