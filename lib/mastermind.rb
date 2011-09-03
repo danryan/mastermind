@@ -1,5 +1,14 @@
+require 'bundler'
+Bundler.setup(:default)
+
+require 'yajl'
+require 'sinatra'
+require 'rake'
+require 'redis'
+
 require 'mastermind/version'
 require 'mastermind/log'
+
 require 'mastermind/mixin/attributes'
 require 'mastermind/mixin/resources'
 require 'mastermind/mixin/providers'
@@ -49,9 +58,24 @@ require 'mastermind/provider/server/ec2'
 # require 'mastermind/provider/server/rackspace'
 
 module Mastermind
+  class << self
+    def config_path=(path)
+      @config_path = path
+    end
+    
+    def config_path
+      @config_path ||= File.expand_path(File.dirname(__FILE__) + "/../config/mastermind.yml")
+    end
+    
+    def config
+      @config ||= {}
+      @config.merge!(YAML.load_file(config_path))
+    end
+  end
+  
+  $redis = ::Redis.new(
+    :host => Mastermind.config['redis']['host'],
+    :port => Mastermind.config['redis']['port'],
+    :db => Mastermind.config['redis']['db']
+  )
 end
-
-  # TODO look at mongomapper for autoloading hotness
-
-
-
