@@ -51,8 +51,8 @@ module Mastermind
           return @provider
         end
         
-        def default_action(action=nil)
-          @default_action = self.class.default_action if !action.nil?
+        def default_action
+          @default_action = self.class.default_action
           return @default_action
         end
         
