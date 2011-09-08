@@ -11,8 +11,10 @@ module Mastermind
     attribute :name, String, :required => true
     attribute :not_if, Proc
     attribute :only_if, Proc
-    attribute :on_success, Proc
-    attribute :on_failure, Proc
+    attribute :on_success, String
+    attribute :on_failure, String
+    attribute :plot
+    
     # attribute :ignore_failure, [ TrueClass, FalseClass ], :default => false
     
     resource_name :default
@@ -43,13 +45,13 @@ module Mastermind
           provider.send(action || self.class.default_action)
           if on_success
             Mastermind::Log.debug "Action succeeded. Executing success callback"
-            instance_eval { on_success.call }
+            plot.tasks[on_success].execute
           end
         rescue => e
           Mastermind::Log.error e.inspect
           if on_failure
             Mastermind::Log.debug "Action failed. Executing failure callback"
-            instance_eval { on_failure.call }
+            plot.tasks[on_failure].execute
           else
             Mastermind::Log.error e.inspect
             raise e.exception
