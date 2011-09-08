@@ -3,8 +3,8 @@ module Mastermind
     include Mastermind::Mixin::Attributes
     
     attribute :name, String
-    attribute :tasks, Array, :default => []
-    
+    attribute :tasks, Hash, :default => {}
+
     def initialize(attrs={}, &block)
       if block_given?
         if block.arity == 1
@@ -24,7 +24,7 @@ module Mastermind
     end
 
     def execute
-      tasks.each do |task|
+      tasks.each_pair do |key, task|
         task.execute(task.action)
       end
     end
@@ -32,11 +32,12 @@ module Mastermind
     def dsl_method(name, klass, &block)
       resource = klass.new rescue Mastermind::Resource.new
       resource.name name
+      resource.plot self
       resource.action (resource.action ? resource.action : klass.default_action)
       if block_given?
         resource.instance_eval(&block)
       end
-      tasks << resource
+      tasks["#{resource.resource_name}[#{resource.name}]"] = resource
     end
     
   end
