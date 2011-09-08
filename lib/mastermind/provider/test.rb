@@ -6,10 +6,21 @@ module Mastermind
       actions :run
       
       def run
-        puts new_resource.inspect
+        requires :foo, :bar
+        
+        puts "Running!"
         return new_resource
       end
 
+      def fail
+        requires :foo, :bar
+        
+        puts "Failing!"
+        raise StandardError
+        return new_resource
+        
+      end
+      
     end
   end
 end
