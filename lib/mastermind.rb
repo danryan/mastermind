@@ -60,3 +60,5 @@ module Mastermind
     :db => Mastermind.config['redis']['db']
   )
 end
+
+class Mastermind::ValidationError < StandardError; end
