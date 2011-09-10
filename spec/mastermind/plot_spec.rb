@@ -62,6 +62,14 @@ module Mastermind
       end
     end
     
+    describe ".find" do
+      it "should find plots by id" do
+        plot.save
+        plot2 = Mastermind::Plot.find(plot.id)
+        plot2.should_not be_nil
+      end
+    end
+    
     describe '#tasks' do
       it "should return a Hash" do
         plot = Plot.new(:name => "servers")

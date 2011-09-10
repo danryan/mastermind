@@ -47,7 +47,6 @@ module Mastermind
       if block_given?
         resource.instance_eval(&block)
       end
-      # tasks << resource
       tasks["#{resource.resource_name}[#{resource.name}]"] = resource
     end
     

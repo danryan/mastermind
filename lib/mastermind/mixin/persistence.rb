@@ -21,6 +21,7 @@ module Mastermind
             nil
           end
         end
+
       end
       
       module InstanceMethods
