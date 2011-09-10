@@ -7,12 +7,12 @@ module Mastermind
     attr_reader :not_if_args
     attr_reader :only_if_args
     
-    attribute :action, Symbol
+    attribute :action, [Symbol, String]
     attribute :name, String, :required => true
     attribute :not_if, Proc
     attribute :only_if, Proc
-    attribute :on_success, String
-    attribute :on_failure, String
+    attribute :on_success, [Array, String], :default => []
+    attribute :on_failure, [Array, String], :default => []
     attribute :plot
     
     # attribute :ignore_failure, [ TrueClass, FalseClass ], :default => false
@@ -43,17 +43,43 @@ module Mastermind
           
           provider = self.class.provider.new(self)
           provider.send(action || self.class.default_action)
-          if on_success
-            Mastermind::Log.debug "Action succeeded. Executing success callback"
-            plot.tasks[on_success].execute
+          if !on_success.empty? && !on_success.nil?
+            Mastermind::Log.debug "Action succeeded. Executing success callbacks"
+            if on_success.is_a?(String)
+              Mastermind::Log.debug "Executing success callback: #{on_success}"
+              plot.tasks[on_success].execute
+              
+            else
+              to_execute = []
+              on_success.each do |success_callback|
+                to_execute << plot.tasks[success_callback]
+              end
+              to_execute.each do |success_callback|
+                Mastermind::Log.debug "Executing success callback: #{success_callback}"
+                success_callback.execute
+              end
+            end
           end
         rescue => e
-          Mastermind::Log.error e.inspect
-          if on_failure
-            Mastermind::Log.debug "Action failed. Executing failure callback"
-            plot.tasks[on_failure].execute
+          Mastermind::Log.error "#{e.message}\n#{e.backtrace.join("\n")}"
+          
+          if !on_failure.empty? && !on_failure.nil?
+            Mastermind::Log.debug "Action failed. Executing failure callbacks"
+            if on_failure.is_a?(String)
+              Mastermind::Log.debug "Executing failure callback: #{on_failure}"
+              plot.tasks[on_failure].execute
+            else
+              to_execute = []
+              on_failure.each do |failure_callback|
+                to_execute << plot.tasks[failure_callback]
+              end
+              to_execute.each do |failure_callback|
+                Mastermind::Log.debug "Executing failure callback: #{failure_callback}"
+                failure_callback.execute
+              end
+            end
           else
-            Mastermind::Log.error e.inspect
+            Mastermind::Log.error "#{e.message}\n#{e.backtrace.join("\n")}"
             raise e.exception
           end
           @successful = false
@@ -61,7 +87,7 @@ module Mastermind
         
       else
         Mastermind::Log.error self.errors.full_messages.join(", ")
-        raise ValidationError, self.errors.full_messages.join(", ")
+        raise Mastermind::ValidationError, self.errors.full_messages.join(", ")
       end
     end
     
@@ -72,7 +98,14 @@ module Mastermind
     def inspect
       %Q{Resource[#{resource_name}] #{options.map {|a| "#{a[0]}: #{a[1]}"}.join(", ")}>}
     end
+
+    def to_hash
+      result = options.merge("resource_name" => resource_name.to_s)
+      return result
+    end
+    
+    def to_json(*a)
+      to_hash.to_json(*a)
+    end
   end
 end
-
-class Mastermind::Resource::ValidationError < StandardError; end
