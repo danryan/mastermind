@@ -6,9 +6,7 @@ module Mastermind
       provider_name :test
       default_action :run
       
-      attribute :foo, String, :required => true
-      attribute :bar, String
-    
+      attribute :message
     end
   end
 end
