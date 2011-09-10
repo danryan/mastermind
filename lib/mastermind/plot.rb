@@ -1,8 +1,10 @@
 module Mastermind
   class Plot
     include Mastermind::Mixin::Attributes
+    include Mastermind::Mixin::Persistence
     
-    attribute :name, String
+    attribute :id, Numeric
+    attribute :name, String, :required => true
     attribute :tasks, Hash, :default => {}
 
     def initialize(attrs={}, &block)
@@ -20,9 +22,17 @@ module Mastermind
           end
         end
       end
-      super(attrs)
+      super(attrs.except('tasks'))
+      if attrs['tasks']
+        tasks_hash = attrs['tasks'].inject({}) do |result, (k,v)|
+          resource = Mastermind::Registry.resources[v['resource_name']]
+          result[k] = resource.new(v.except('resource_name'))
+          result
+        end
+        self.tasks = tasks_hash
+      end
     end
-
+    
     def execute
       tasks.each_pair do |key, task|
         task.execute(task.action)
@@ -32,13 +42,31 @@ module Mastermind
     def dsl_method(name, klass, &block)
       resource = klass.new rescue Mastermind::Resource.new
       resource.name name
-      resource.plot self
+      resource.plot self.name
       resource.action (resource.action ? resource.action : klass.default_action)
       if block_given?
         resource.instance_eval(&block)
       end
+      # tasks << resource
       tasks["#{resource.resource_name}[#{resource.name}]"] = resource
     end
     
+    def to_hash
+      tasks_hash = tasks.inject({}) do |result, (k,v)|
+        result[k] = v.to_hash
+        result
+      end
+      
+      result = options.except(:tasks).merge("tasks" => tasks_hash)
+      return result
+    end
+    
+    def to_json(*a)
+      to_hash.to_json(*a)
+    end
+    
+    def from_json(*a)
+      
+    end
   end
 end
