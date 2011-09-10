@@ -11,6 +11,7 @@ require 'mastermind/log'
 require 'mastermind/registry'
 
 require 'mastermind/mixin/attributes'
+require 'mastermind/mixin/persistence'
 require 'mastermind/mixin/resources'
 require 'mastermind/mixin/providers'
 require 'mastermind/plot'
