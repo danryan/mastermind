@@ -12,6 +12,9 @@ Spork.prefork do
   RSpec.configure do |config|
     config.color_enabled = true
     config.mock_with :rspec
+    config.before do
+      $redis.flushdb
+    end
   end
 end
 
