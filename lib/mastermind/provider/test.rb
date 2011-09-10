@@ -6,16 +6,17 @@ module Mastermind
       actions :run
       
       def run
-        requires :foo, :bar
+        requires :message
         
-        puts "Running!"
+        puts new_resource.message
         return new_resource
       end
 
       def fail
-        requires :foo, :bar
+        requires :message
         
-        puts "Failing!"
+        puts new_resource.message
+        
         raise StandardError
         return new_resource
         
