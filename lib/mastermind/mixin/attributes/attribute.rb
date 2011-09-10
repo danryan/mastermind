@@ -33,18 +33,17 @@ module Mastermind
         def set(value)
           if type.kind_of?(Array)
             if !value.nil? && !type.nil? && !type.include?(value.class)
-              raise ValidationError, "#{name} must be an instance of #{type}"
+              raise Mastermind::ValidationError, "#{name} must be an instance of #{type}"
             end
           elsif type.kind_of?(Class)
             if !value.nil? && !type.nil? && (!value.kind_of?(type) || type == nil)
-              raise ValidationError, "#{name} must be an instance of #{type}"
+              raise Mastermind::ValidationError, "#{name} must be an instance of #{type}"
             end
           end
           value
         end
       end
       
-      class ValidationError < ArgumentError; end
     end
   end
 end

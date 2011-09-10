@@ -1,5 +1,5 @@
 require 'active_model'
-require 'active_support/all'
+require 'active_support/concern'
 
 module Mastermind
   module Mixin
@@ -12,7 +12,7 @@ module Mastermind
       
       module ClassMethods
         def resource_name(resource_name=nil)
-          @resource_name = resource_name.to_sym if !resource_name.nil?
+          @resource_name = resource_name.to_s if !resource_name.nil?
           Mastermind::Registry.resources[@resource_name] = self
           return @resource_name
         end
@@ -23,7 +23,7 @@ module Mastermind
         end
         
         def provider 
-          @provider = Mastermind::Registry.providers[provider_name]
+          @provider = Mastermind::Registry.providers[provider_name.to_s]
           return @provider
         end
         
@@ -51,8 +51,8 @@ module Mastermind
           return @provider
         end
         
-        def default_action(action=nil)
-          @default_action = self.class.default_action if !action.nil?
+        def default_action
+          @default_action = self.class.default_action
           return @default_action
         end
         
@@ -81,7 +81,7 @@ module Mastermind
           end
           true
         end
-      
+    
       end
     
     end

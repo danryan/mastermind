@@ -25,6 +25,14 @@ module Mastermind
     def to_s
       "provider[#{provider_name}]"
     end
+    
+    def to_json(*a)
+      result = {
+        "name" => name,
+        "attributes" => options
+      }
+      result.to_json(*a)
+    end
   end
 end
 

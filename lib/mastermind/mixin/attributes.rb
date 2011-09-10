@@ -1,6 +1,7 @@
 require 'mastermind/mixin/attributes/attribute'
 require 'active_model'
-require 'active_support/all'
+require 'active_support/concern'
+require 'active_support/hash_with_indifferent_access'
 
 module Mastermind
   module Mixin
@@ -95,6 +96,13 @@ module Mastermind
                   read_attribute(attribute.name)
                 end
               end
+              define_method("#{attribute.name}=") do |*value, &block|
+                if !block.nil?
+                  write_attribute(attribute.name, block)
+                elsif !value.blank?
+                  write_attribute(attribute.name, value.first)
+                end
+              end 
             end
           end
           assign(attrs)
