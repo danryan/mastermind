@@ -22,15 +22,7 @@ module Mastermind
           end
         end
       end
-      super(attrs.except('tasks'))
-      if attrs['tasks']
-        tasks_hash = attrs['tasks'].inject({}) do |result, (k,v)|
-          resource = Mastermind::Registry.resources[v['resource_name']]
-          result[k] = resource.new(v.except('resource_name'))
-          result
-        end
-        self.tasks = tasks_hash
-      end
+      super(attrs)
     end
     
     def execute
