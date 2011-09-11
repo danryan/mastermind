@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'sinatra', '>= 1.2.6'
   s.add_dependency 'rake', '>= 0.9.2'
   s.add_dependency 'redis', '>= 2.2.2'
+  s.add_dependency 'virtus', '>= 0.0.8'
   # s.add_dependency 'activesupport', '3.0.10'
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"

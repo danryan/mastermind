@@ -5,6 +5,7 @@ require 'yajl'
 require 'sinatra'
 require 'rake'
 require 'redis'
+require 'virtus'
 
 require 'mastermind/version'
 require 'mastermind/log'
