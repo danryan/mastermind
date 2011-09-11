@@ -60,5 +60,12 @@ module Mastermind
     def from_json(*a)
       
     end
+    
+    def inspect
+      attrs = options.map do |option|
+        "@#{option[0]}=#{option[1]}"
+      end
+      "#<Plot #{attrs.join(" ")}>"
+    end
   end
 end

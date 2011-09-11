@@ -26,6 +26,13 @@ module Mastermind
       "provider[#{provider_name}]"
     end
     
+    def inspect
+      attrs = options.map do |option|
+        "@#{option[0]}=#{option[1]}"
+      end
+      "#<Provider #{attrs.join(" ")}>"
+    end
+    
     def to_json(*a)
       result = {
         "name" => name,

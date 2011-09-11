@@ -96,7 +96,10 @@ module Mastermind
     end
     
     def inspect
-      %Q{Resource[#{resource_name}] #{options.map {|a| "#{a[0]}: #{a[1]}"}.join(", ")}>}
+      attrs = options.map do |option|
+        "@#{option[0]}=#{option[1]}"
+      end
+      "#<Resource #{attrs.join(" ")}>"
     end
 
     def to_hash

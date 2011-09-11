@@ -2,7 +2,7 @@ require 'bundler'
 Bundler.setup(:default)
 
 require 'yajl'
-require 'sinatra'
+# require 'sinatra'
 require 'rake'
 require 'redis'
 require 'virtus'
