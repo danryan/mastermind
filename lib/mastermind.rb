@@ -17,7 +17,7 @@ require 'mastermind/mixin/providers'
 require 'mastermind/plot'
 
 require 'mastermind/resource'
-require 'mastermind/resource/test'
+require 'mastermind/resource/mock'
 require 'mastermind/resource/cm'
 require 'mastermind/resource/cm/chef'
 require 'mastermind/resource/dns'
@@ -29,7 +29,7 @@ require 'mastermind/resource/server'
 require 'mastermind/resource/server/ec2'
 
 require 'mastermind/provider'
-require 'mastermind/provider/test'
+require 'mastermind/provider/mock'
 require 'mastermind/provider/cm'
 require 'mastermind/provider/cm/chef'
 
