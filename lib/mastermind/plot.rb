@@ -34,20 +34,21 @@ module Mastermind
     end
     
     def execute
-      tasks.each_pair do |key, task|
-        task.execute(task.action)
+      tasks.each do |key, task|
+        resource_class = Mastermind::Registry.resources[task['resource_name']]
+        resource = resource_class.new(task.except('resource_name'))
+        resource.execute(resource.action)
       end
     end
     
     def dsl_method(name, klass, &block)
       resource = klass.new rescue Mastermind::Resource.new
-      resource.name name
-      resource.plot self.name
-      resource.action (resource.action ? resource.action : klass.default_action)
+      resource.name = name
+      resource.action = (resource.action ? resource.action : klass.default_action)
       if block_given?
         resource.instance_eval(&block)
       end
-      tasks["#{resource.resource_name}[#{resource.name}]"] = resource
+      tasks["#{resource.resource_name}[#{resource.name}]"] = resource.options
     end
     
     def to_hash
