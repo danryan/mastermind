@@ -2,7 +2,6 @@ require 'bundler'
 Bundler.setup(:default)
 
 require 'yajl'
-# require 'sinatra'
 require 'rake'
 require 'redis'
 require 'ascribe'
@@ -14,6 +13,7 @@ require 'mastermind/registry'
 require 'mastermind/mixin/persistence'
 require 'mastermind/mixin/resources'
 require 'mastermind/mixin/providers'
+require 'mastermind/mixin/plots'
 require 'mastermind/plot'
 
 require 'mastermind/resource'

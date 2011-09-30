@@ -14,6 +14,10 @@ module Mastermind
         resource.execute(resource.action)
       end
     end
-    
+   
+    def to_s
+      "plot[#{name}]"
+    end
+
   end
 end

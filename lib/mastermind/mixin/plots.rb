@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Mastermind::Mixin::Providers
+module Mastermind::Mixin::Plots
   extend ActiveSupport::Concern
   include Ascribe::Attributes
    

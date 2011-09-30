@@ -9,8 +9,9 @@ module Mastermind
     
     attribute :name, String
     
-    def initialize(new_resource)
-      @new_resource = new_resource
+    def initialize(attrs={})
+      @new_resource = attrs.delete(:new_resource)
+      super(attrs)
     end
     
     def self.find_by_name(name)

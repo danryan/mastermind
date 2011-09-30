@@ -1,4 +1,3 @@
-require 'active_model'
 require 'active_support/concern'
 
 module Mastermind::Mixin::Resources
