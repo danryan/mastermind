@@ -3,7 +3,7 @@ module Mastermind
     class Mock < Provider
       
       provider_name :mock
-      actions :run
+      actions :run, :fail
       
       def run
         requires :message
@@ -14,8 +14,6 @@ module Mastermind
 
       def fail
         requires :message
-        
-        puts new_resource.message
         
         raise StandardError
         return new_resource

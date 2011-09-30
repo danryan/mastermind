@@ -24,12 +24,12 @@ module Mastermind::Mixin::Resources
     end
     
     def provider 
-      @provider = Mastermind::Registry.providers[provider_name]
+      attribute :provider, Object
       return @provider
     end
     
     def default_action(name=nil)
-      @default_action = name if !name.nil?
+      @default_action = name.to_s if !name.nil?
       attribute :default_action, [String, Symbol], :default => @default_action
       return @default_action
     end
@@ -45,11 +45,28 @@ module Mastermind::Mixin::Resources
       new_resource.instance_eval(&block)
       tasks << new_resource
     end
+    
+    def from_hash(hash)
+      resource = find_by_name(hash["resource_name"])
+      result = resource.new(hash)
+      return result
+    end
 
+    def from_json(json)
+      hash = Yajl.load(json)
+      resource = find_by_name(hash["resource_name"])
+      result = resource.new(hash)
+      return result
+    end
   end
   
   module InstanceMethods
     
+    def initialize(attrs={})
+      @provider = Mastermind::Registry.providers[self.class.provider_name]
+      super(attrs)
+    end
+
     def execute_only_if(only_if)
       res = instance_eval { only_if.call }
       unless res
@@ -64,6 +81,20 @@ module Mastermind::Mixin::Resources
         return false
       end
       true
+    end
+
+    def to_hash
+      result = attributes.merge(options)
+      return result
+    end
+    
+    def to_json(*a)
+      result = Yajl.dump(to_hash, *a)
+      return result
+    end
+
+    def to_s
+      "#{resource_name}[#{name}]"
     end
 
   end

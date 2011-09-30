@@ -4,10 +4,8 @@ module Mastermind
 
     attr_accessor :new_resource
     
-    provider_name :default
+    provider_name nil
     actions :nothing
-    
-    attribute :name, String
     
     def initialize(attrs={})
       @new_resource = attrs.delete(:new_resource)

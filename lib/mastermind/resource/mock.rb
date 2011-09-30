@@ -6,7 +6,7 @@ module Mastermind
       provider_name :mock
       default_action :run
       
-      attribute :message, String
+      attribute :message, String, :required => true
     end
   end
 end
