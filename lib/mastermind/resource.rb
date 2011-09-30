@@ -12,7 +12,6 @@ class Mastermind::Resource
   attribute :only_if, Proc
   attribute :on_success, [Array, String], :default => []
   attribute :on_failure, [Array, String], :default => []
-  attribute :plot
   
   def execute(action=nil)
     if self.valid?

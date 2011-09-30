@@ -32,13 +32,12 @@ describe Mastermind::Resource do
         "only_if" => nil,
         "on_success" => [],
         "on_failure"=> [], 
-        "plot" => nil,
         "resource_name" => "mock",
         "message" => "Running!"
       }
     end
     let(:resource_json) do
-      "{\"resource_name\":\"mock\",\"default_action\":\"run\",\"action\":null,\"name\":\"foo\",\"not_if\":null,\"only_if\":null,\"on_success\":[],\"on_failure\":[],\"plot\":null,\"provider_name\":\"mock\",\"message\":\"Running!\"}"
+      "{\"resource_name\":\"mock\",\"default_action\":\"run\",\"action\":null,\"name\":\"foo\",\"not_if\":null,\"only_if\":null,\"on_success\":[],\"on_failure\":[],\"provider_name\":\"mock\",\"message\":\"Running!\"}"
     end
     
     describe "#to_hash" do
