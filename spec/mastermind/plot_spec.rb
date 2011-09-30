@@ -2,25 +2,24 @@ require 'spec_helper'
 
 describe Mastermind::Plot do
   let(:plot) { Mastermind::Plot.new(:name => "foo") }
-
-  let(:plot_hash) do
-    {"name" => "foo", "tasks"=>[]}
-  end
-  let(:plot_json) do
-    "{\"name\":\"foo\",\"tasks\":[]}"
-  end
-
   let(:full_plot) do
     Mastermind::Plot.new(
       :name => "foo",
       :tasks => [
-        Mastermind::Resource::Mock.new(:name => "foo"),
-        Mastermind::Resource::Mock.new(:name => "bar")
+        Mastermind::Resource::Mock.new(:name => "foo", :message => "FOO!"),
+        Mastermind::Resource::Mock.new(:name => "bar", :message => "BAR!")
       ]
     )
   end
+  let(:plot_hash) do
+    {"id" => nil, "name" => "foo", "tasks"=>[]}
+  end
+  let(:plot_json) do
+    "{\"id\":null,\"name\":\"foo\",\"tasks\":[]}"
+  end
   let(:full_plot_hash) do
     {
+      "id" => nil,
       "name" => "foo", 
       "tasks" => [
         {
@@ -33,7 +32,7 @@ describe Mastermind::Plot do
           "on_success" => [],
           "on_failure" => [],
           "provider_name" => "mock", 
-          "message" => nil
+          "message" => "FOO!"
         }, 
         {
           "resource_name" => "mock",
@@ -45,13 +44,48 @@ describe Mastermind::Plot do
           "on_success" => [],
           "on_failure" => [],
           "provider_name" => "mock",
-          "message" => nil
+          "message" => "BAR!"
+        }
+      ]
+    }
+  end
+  let(:saved_plot_hash) do
+    {
+      "id" => 1,
+      "name" => "foo", 
+      "tasks" => [
+        {
+          "resource_name" => "mock",
+          "default_action" => "run",
+          "action" => nil,
+          "name" => "foo",
+          "not_if" => nil,
+          "only_if" => nil,
+          "on_success" => [],
+          "on_failure" => [],
+          "provider_name" => "mock", 
+          "message" => "FOO!"
+        }, 
+        {
+          "resource_name" => "mock",
+          "default_action" => "run",
+          "action" => nil,
+          "name" => "bar",
+          "not_if" => nil,
+          "only_if" => nil,
+          "on_success" => [],
+          "on_failure" => [],
+          "provider_name" => "mock",
+          "message" => "BAR!"
         }
       ]
     }
   end
   let(:full_plot_json) do
-    "{\"name\":\"foo\",\"tasks\":[{\"resource_name\":\"mock\",\"default_action\":\"run\",\"action\":null,\"name\":\"foo\",\"not_if\":null,\"only_if\":null,\"on_success\":[],\"on_failure\":[],\"provider_name\":\"mock\",\"message\":null},{\"resource_name\":\"mock\",\"default_action\":\"run\",\"action\":null,\"name\":\"bar\",\"not_if\":null,\"only_if\":null,\"on_success\":[],\"on_failure\":[],\"provider_name\":\"mock\",\"message\":null}]}"
+    "{\"id\":null,\"name\":\"foo\",\"tasks\":[{\"resource_name\":\"mock\",\"default_action\":\"run\",\"action\":null,\"name\":\"foo\",\"not_if\":null,\"only_if\":null,\"on_success\":[],\"on_failure\":[],\"provider_name\":\"mock\",\"message\":\"FOO!\"},{\"resource_name\":\"mock\",\"default_action\":\"run\",\"action\":null,\"name\":\"bar\",\"not_if\":null,\"only_if\":null,\"on_success\":[],\"on_failure\":[],\"provider_name\":\"mock\",\"message\":\"BAR!\"}]}"
+  end
+  let(:saved_plot_json) do
+    "{\"id\":1,\"name\":\"foo\",\"tasks\":[{\"resource_name\":\"mock\",\"default_action\":\"run\",\"action\":null,\"name\":\"foo\",\"not_if\":null,\"only_if\":null,\"on_success\":[],\"on_failure\":[],\"provider_name\":\"mock\",\"message\":null},{\"resource_name\":\"mock\",\"default_action\":\"run\",\"action\":null,\"name\":\"bar\",\"not_if\":null,\"only_if\":null,\"on_success\":[],\"on_failure\":[],\"provider_name\":\"mock\",\"message\":null}]}"
   end
 
   describe "conversions" do
@@ -114,57 +148,47 @@ describe Mastermind::Plot do
     end
   end  
 
-  #describe '#new' do
+  describe '#new' do
     
-    #it "should accept a name attribute" do
-      #plot = Plot.new(:name => "infrastructure")
-      #plot.name.should == "infrastructure"
-    #end
+    it "starts with an empty task list" do
+      plot = Mastermind::Plot.new(:name => "servers")
+      plot.tasks.length.should == 0
+    end
     
-    #it "should raise an error if no name is specified" do
-      #plot = Plot.new
-      #lambda { plot.save }.should raise_error Mastermind::ValidationError
-    #end
-    
-    #it "should have an empty task list" do
-      #plot = Plot.new(:name => "servers")
-      #plot.tasks.length.should == 0
-    #end
-    
-    #context "if a tasks hash is supplied" do
-      #it "should convert tasks hash to a hash of Resource objects" do
-        #plot.tasks.should have(2).items
-        #plot.tasks['test[foo]'].should be_an_instance_of Mastermind::Resource::Test
-      #end
-    #end
-  #end
+  end
   
-  #describe "#save" do
-    #it "should generate an id" do
-      #plot.save
-      #plot.id.should_not be_nil
-    #end
+  describe "#save" do
+    it "generates an id" do
+      plot.save
+      plot.id.should_not be_nil
+    end
     
-    #it "should save to the database" do
-      #plot.save
-      #plot2 = Mastermind::Plot.find(plot.id)
-      #plot2.tasks.should have(2).items
-      #plot2.tasks['test[foo]'].should be_an_instance_of Mastermind::Resource::Test
-    #end
-  #end
+    it "saves to the database" do
+      full_plot.save
+      plot2 = Mastermind::Plot.find(full_plot.id)
+      plot2.tasks.should have(2).items
+      plot2.tasks.first.should be_a Mastermind::Resource
+    end
+
+    it "raises an error if invalid" do
+      plot = Mastermind::Plot.new
+      lambda { plot.save }.should raise_error Mastermind::ValidationError
+    end
+
+  end
   
-  #describe ".find" do
-    #it "should find plots by id" do
-      #plot.save
-      #plot2 = Mastermind::Plot.find(plot.id)
-      #plot2.should_not be_nil
-    #end
-  #end
+  describe ".find" do
+    it "should find plots by id" do
+      plot.save
+      plot2 = Mastermind::Plot.find(plot.id)
+      plot2.should_not be_nil
+    end
+  end
   
-  #describe '#tasks' do
-    #it "should return a Hash" do
-      #plot = Plot.new(:name => "servers")
-      #plot.tasks.should be_a Hash
-    #end
-  #end
+  describe '#tasks' do
+    it "returns an array of Resources" do
+      full_plot.tasks.should be_an Array
+      full_plot.tasks.first.should be_a Mastermind::Resource
+    end
+  end
 end

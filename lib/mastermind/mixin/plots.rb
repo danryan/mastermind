@@ -23,6 +23,16 @@ module Mastermind::Mixin::Plots
       result.tasks = tasks.map{|task| Mastermind::Resource.from_hash(task)}      
       return result
     end
+
+     def find(id)
+       begin
+         record = Mastermind::Plot.from_json($redis.get("mastermind::plot:#{id}"))
+         return record
+       rescue Yajl::ParseError
+         Mastermind::Log.debug("Could not find a record with id #{id}")
+         nil
+       end
+     end
   
   end
 
@@ -45,6 +55,17 @@ module Mastermind::Mixin::Plots
       end
       super(attrs)
     end
+
+    def save
+      if valid?
+        @id ||= $redis.incr("#{self.class.name.downcase}:next_id")
+        $redis.set("#{self.class.name.downcase}:#{id}", self.to_json)
+        return self
+      else
+        raise Mastermind::ValidationError, self.errors.full_messages.join(", ")
+      end
+    end
+
 
     def dsl_method(name, klass, &block)
       resource = klass.new rescue Mastermind::Resource.new

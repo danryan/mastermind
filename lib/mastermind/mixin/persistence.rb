@@ -13,8 +13,7 @@ module Mastermind
       module ClassMethods
         def find(id)
           begin
-            attrs = Yajl.load($redis.get("#{self.name.downcase}:#{id}"))
-            record = new(attrs)
+            record = Mastermind::Plot.from_json($redis.get("#{self.name.downcase}:#{id}"))
             return record
           rescue Yajl::ParseError
             Mastermind::Log.debug("Could not find a record with id #{id}")
