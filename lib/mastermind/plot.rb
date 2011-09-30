@@ -3,9 +3,9 @@ module Mastermind
     include Mastermind::Mixin::Plots
     include Mastermind::Mixin::Persistence
     
-    attribute :id, Numeric
+    #attribute :id, Numeric
     attribute :name, String, :required => true
-    attribute :tasks, Hash, :default => {}
+    attribute :tasks, Array, :default => []
 
     def execute
       tasks.each do |key, task|

@@ -1,27 +1,119 @@
 require 'spec_helper'
 
 describe Mastermind::Plot do
-  let(:attrs_hash) do
+  let(:plot) { Mastermind::Plot.new(:name => "foo") }
+
+  let(:plot_hash) do
+    {"name" => "foo", "tasks"=>[]}
+  end
+  let(:plot_json) do
+    "{\"name\":\"foo\",\"tasks\":[]}"
+  end
+
+  let(:full_plot) do
+    Mastermind::Plot.new(
+      :name => "foo",
+      :tasks => [
+        Mastermind::Resource::Mock.new(:name => "foo"),
+        Mastermind::Resource::Mock.new(:name => "bar")
+      ]
+    )
+  end
+  let(:full_plot_hash) do
     {
-      "name" => "foobar", 
-      "tasks"=> {
-        "test[foo]" => { 
-          "action" => "run", 
-          "name" => "foo", 
-          "message" => "FOO", 
-          "resource_name" => "test"
-        },
-        "test[bar]" => {
-          "action"=>"run", 
-          "name"=>"bar",
-          "message" => "BAR",
-          "resource_name" => "test"
+      "name" => "foo", 
+      "tasks" => [
+        {
+          "resource_name" => "mock",
+          "default_action" => "run",
+          "action" => nil,
+          "name" => "foo",
+          "not_if" => nil,
+          "only_if" => nil,
+          "on_success" => [],
+          "on_failure" => [],
+          "provider_name" => "mock", 
+          "message" => nil
+        }, 
+        {
+          "resource_name" => "mock",
+          "default_action" => "run",
+          "action" => nil,
+          "name" => "bar",
+          "not_if" => nil,
+          "only_if" => nil,
+          "on_success" => [],
+          "on_failure" => [],
+          "provider_name" => "mock",
+          "message" => nil
         }
-      }
+      ]
     }
   end
-  let(:plot) { Mastermind::Plot.new(attrs_hash) }
-  
+  let(:full_plot_json) do
+    "{\"name\":\"foo\",\"tasks\":[{\"resource_name\":\"mock\",\"default_action\":\"run\",\"action\":null,\"name\":\"foo\",\"not_if\":null,\"only_if\":null,\"on_success\":[],\"on_failure\":[],\"provider_name\":\"mock\",\"message\":null},{\"resource_name\":\"mock\",\"default_action\":\"run\",\"action\":null,\"name\":\"bar\",\"not_if\":null,\"only_if\":null,\"on_success\":[],\"on_failure\":[],\"provider_name\":\"mock\",\"message\":null}]}"
+  end
+
+  describe "conversions" do
+
+    describe "#to_hash" do
+      it "returns a Hash" do
+        plot.to_hash.should be_a Hash
+        plot.to_hash.should == plot_hash    
+      end
+
+      it "returns a Hash with task objects" do
+        full_plot.to_hash.should == full_plot_hash
+      end
+
+    end
+    
+    describe "#to_json" do
+      it "returns a JSON string" do
+        plot.to_json.should be_a String
+        plot.to_json.should == plot_json    
+      end
+
+      it "returns a JSON string with task objects" do
+        full_plot.to_json.should == full_plot_json        
+      end
+    end
+
+    describe ".from_hash" do
+      it "converts a Hash to a Plot" do
+        plot = Mastermind::Plot.from_hash(plot_hash)
+        plot.name.should == "foo"
+        plot.tasks.should be_empty
+      end
+
+      it "converts a Hash with tasks to a Plot" do
+        plot = Mastermind::Plot.from_hash(full_plot_hash)
+        plot.name.should == "foo"
+        plot.tasks.first.should be_a Mastermind::Resource
+      end
+    end
+
+    describe ".from_json" do
+      it "converts a JSON string to a Plot" do
+        plot = Mastermind::Plot.from_json(plot_json)
+        plot.name.should == "foo"
+        plot.tasks.should be_empty
+      end
+
+      it "converts a JSON string with tasks to a Plot" do
+        plot = Mastermind::Plot.from_json(full_plot_json)
+        plot.name.should == "foo"
+        plot.tasks.first.should be_a Mastermind::Resource
+      end
+    end
+
+    describe "#to_s" do
+      it "returns a String" do
+        plot.to_s.should == "plot[foo]"
+      end
+    end
+  end  
+
   #describe '#new' do
     
     #it "should accept a name attribute" do
