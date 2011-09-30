@@ -1,6 +1,5 @@
 module Mastermind
   class Resource
-    include Mixin::Attributes
     include Mixin::Resources
 
     attr_accessor :provider
@@ -20,10 +19,6 @@ module Mastermind
     resource_name :default
     default_action :nothing
         
-    def initialize(args={})
-      super(args)
-    end
-    
     def execute(action=nil)
       if self.valid?
         begin
@@ -95,20 +90,10 @@ module Mastermind
       "#{resource_name}[#{name}]"
     end
     
-    def inspect
-      attrs = options.map do |option|
-        "@#{option[0]}=#{option[1]}"
-      end
-      "#<Resource #{attrs.join(" ")}>"
-    end
-
     def to_hash
       result = options.merge("resource_name" => resource_name.to_s)
       return result
     end
     
-    def to_json(*a)
-      to_hash.to_json(*a)
-    end
   end
 end

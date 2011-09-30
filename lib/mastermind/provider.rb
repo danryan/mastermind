@@ -1,6 +1,5 @@
 module Mastermind
   class Provider
-    include Mixin::Attributes
     include Mixin::Providers
 
     attr_accessor :new_resource
@@ -26,20 +25,6 @@ module Mastermind
       "provider[#{provider_name}]"
     end
     
-    def inspect
-      attrs = options.map do |option|
-        "@#{option[0]}=#{option[1]}"
-      end
-      "#<Provider #{attrs.join(" ")}>"
-    end
-    
-    def to_json(*a)
-      result = {
-        "name" => name,
-        "attributes" => options
-      }
-      result.to_json(*a)
-    end
   end
 end
 

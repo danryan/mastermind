@@ -5,13 +5,12 @@ require 'yajl'
 # require 'sinatra'
 require 'rake'
 require 'redis'
-require 'virtus'
+require 'ascribe'
 
 require 'mastermind/version'
 require 'mastermind/log'
 require 'mastermind/registry'
 
-require 'mastermind/mixin/attributes'
 require 'mastermind/mixin/persistence'
 require 'mastermind/mixin/resources'
 require 'mastermind/mixin/providers'
@@ -63,3 +62,4 @@ module Mastermind
 end
 
 class Mastermind::ValidationError < StandardError; end
+class Mastermind::InvalidAction < StandardError; end
