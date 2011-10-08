@@ -1,6 +1,7 @@
 module Mastermind
   class Plot
     include Mastermind::Mixin::Plots
+    include Mastermind::Mixin::Persistence
     
     attribute :id, Numeric
     attribute :name, String, :required => true
