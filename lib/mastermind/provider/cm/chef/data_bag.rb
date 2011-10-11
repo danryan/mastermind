@@ -1,12 +1,13 @@
+require 'spice'
+
 module Mastermind
-  class Resource
+  class Provider
     class CM 
       class Chef
         class DataBag < Chef
-          
-          resource_name :chef_data_bag
+        
           provider_name :chef_data_bag
-
+          actions :create, :destroy, :update, :list, :show
         end
       end
     end

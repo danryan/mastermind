@@ -4,7 +4,7 @@ module Mastermind
       
       resource_name :server
       
-      attribute :server, :type => String
+      attribute :server, String
     end
   end
 end
