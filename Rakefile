@@ -1,25 +1,7 @@
-require 'bundler/gem_tasks'
+#!/usr/bin/env rake
+# Add your own tasks in files placed in lib/tasks ending in .rake,
+# for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
-require 'rspec/core/rake_task'
+require File.expand_path('../config/application', __FILE__)
 
-desc "Run specs"
-RSpec::Core::RakeTask.new do |task|
-  task.pattern = "spec/**/*_spec.rb"
-end
-  
-desc "Run guard"
-task :guard do
-  sh %{bundle exec guard start}
-end
-
-desc "Run spork"
-task :spork do
-  sh %{bundle exec spork}
-end
-
-
-Bundler.require(:doc)
-desc "Generate documentation"
-YARD::Rake::YardocTask.new do |t|
-  t.files = [ 'lib/**/*.rb' ]
-end
+Mastermind::Application.load_tasks

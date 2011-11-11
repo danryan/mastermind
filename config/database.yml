@@ -1,0 +1,15 @@
+defaults: &defaults
+  adapter: sqlite
+
+development:
+  database: db/development.sqlite3
+  <<: *defaults
+  
+test:
+  database: db/test.sqlite3
+  <<: *defaults
+  
+production:
+  database: db/production.sqlite3
+  <<: *defaults
+  
