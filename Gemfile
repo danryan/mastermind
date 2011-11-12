@@ -21,6 +21,7 @@ gem 'dm-aggregates', DM
 gem 'dm-timestamps', DM
 gem 'dm-observer', DM
 
+gem 'ascribe'
 # DM = '~> 1.3.0.beta'
 # 
 # gem 'dm-core', DM, :git => "git://github.com/datamapper/dm-core"
