@@ -5,11 +5,15 @@ class Target::Mock < Target
     requires :message
     
     Mastermind.logger.info message
+    
+    {}
   end
   
   action :fail do
     requires :message
     
     raise StandardError, "A failing action!"
+    
+    {}
   end
 end

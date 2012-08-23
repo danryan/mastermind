@@ -10,7 +10,6 @@ class Target
     @allowed_actions ||= [ :nothing ]
   end
   
-  
   def self.required_attributes
     @required_attributes ||= {}
   end
@@ -26,7 +25,6 @@ class Target
     
     define_method(action_name) do
       requires required_attributes[action_name]
-      # Mastermind.logger.debug "Executing #{action_name} for #{to_s}."
       instance_eval(&block)
       # self
     end
@@ -62,18 +60,12 @@ class Target
     end
     
     begin
-      self.send(action_to_execute)
+      result = self.send(action_to_execute)
+      self.attributes = result
     rescue => e
       Mastermind.logger.error e.message, :backtrace => e.backtrace
       errors.add(:exception, e.message)
-      return false
-    end
-    
-    if self.errors.empty?
-      return self
-    else
-      return false
+      raise e
     end
   end
-  
 end

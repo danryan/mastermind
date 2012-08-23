@@ -1,2 +1,3 @@
 web: bundle exec unicorn -p $PORT
-worker: bundle exec sidekiq
+sidekiq: bundle exec sidekiq
+ruote: bundle exec rake ruote:run_worker

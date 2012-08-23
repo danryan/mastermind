@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'redis'
+require 'ruote'
+require 'ruote-redis'
+require 'yajl-ruby'
+
+url = ENV['REDIS_URL'] || ENV['REDISTOGO_URL'] || 'redis://localhost:6379/0'
+
+RUOTE_STORAGE = Ruote::Redis::Storage.new(::Redis.connect(:url => url, :thread_safe => true), {})
+ 
+RUOTE = Ruote::Dashboard.new(Ruote::Worker.new(RUOTE_STORAGE))
+ 
+RUOTE.join

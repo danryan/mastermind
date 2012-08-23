@@ -6,6 +6,9 @@ gem 'rails', '3.2.8'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'pg'
+gem 'haml'
+gem 'haml-rails'
+gem 'simple_form'
 
 # JSON
 gem 'json', :platform => :jruby
@@ -15,9 +18,10 @@ gem 'yajl-ruby', :platform => [ :ruby_18, :ruby_19 ]
 # OpenSSL
 gem 'jruby-openssl', :platform => :jruby
 
+# Ruote and friends
 gem 'ruote', git: 'https://github.com/jmettraux/ruote.git'
 gem 'ruote-redis', git: 'https://github.com/jmettraux/ruote-redis.git'
-gem 'ruote-kit'
+gem 'ruote-kit', git: 'git://github.com/kennethkalmer/ruote-kit.git'
 
 gem 'active_attr', '~> 0.6.0'
 
@@ -74,7 +78,7 @@ end
 
 # Use unicorn as the app server
 gem 'unicorn'
-
+gem 'foreman'
 # Deploy with Capistrano
 # gem 'capistrano'
 

@@ -3,3 +3,8 @@
 
 en:
   hello: "Hello world"
+
+  flash:
+    notice:
+      launched: "process %{wfid} launched"
+    
