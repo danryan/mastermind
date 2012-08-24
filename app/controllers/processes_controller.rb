@@ -5,6 +5,8 @@ class ProcessesController < ApplicationController
   end
   
   def create
+    
+    
     name = params[:name]
     id = params[:id]
     fields = params[:fields]

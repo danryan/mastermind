@@ -1,12 +1,20 @@
 class Participant::Mock < Participant
   register :mock
   
-  def on_workitem
-    Mastermind.logger.info "processing workitem!"
-    Mastermind.logger.info workitem.inspect
-    Mastermind.logger.info workitem.fields
+  action :pass do
+    requires :message
     
-    Target::Mock.new(workitem.fields).execute(action)
-    reply
+    Mastermind.logger.info target.message
+    
+    {}
   end
+  
+  action :fail do
+    requires :message
+    
+    raise StandardError, "A failing action!"
+    
+    {}
+  end
+
 end

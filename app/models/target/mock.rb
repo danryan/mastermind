@@ -1,19 +1,5 @@
 class Target::Mock < Target
+  register :mock
+  
   attribute :message, type: String
-  
-  action :pass do
-    requires :message
-    
-    Mastermind.logger.info message
-    
-    {}
-  end
-  
-  action :fail do
-    requires :message
-    
-    raise StandardError, "A failing action!"
-    
-    {}
-  end
 end

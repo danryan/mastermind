@@ -12,10 +12,6 @@
 require 'yajl'
 Rufus::Json.backend = :yajl
 
-url = ENV['REDIS_URL'] || ENV['REDISTOGO_URL'] || 'redis://localhost:6379/0'
-
-RUOTE_STORAGE = Ruote::Redis::Storage.new(::Redis.connect(:url => url, :thread_safe => true), {})
-
 RuoteKit.engine = Mastermind.dashboard
 
 # By default, there is a running worker when you start the Rails server. That is

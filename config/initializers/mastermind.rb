@@ -10,25 +10,43 @@ module Mastermind
   end
   
   def dashboard
-    url = ENV['REDIS_URL'] || ENV['REDISTOGO_URL'] || 'redis://localhost:6379/10'
+    url = ENV['REDIS_URL'] || ENV['REDISTOGO_URL'] || 'redis://localhost:6379/1'
     storage = Ruote::Redis::Storage.new(::Redis.connect(url: url, thread_safe: true))
-    
-    @dashboard ||= Ruote::Dashboard.new(Ruote::Worker.new(storage))
+    worker = Ruote::Worker.new(storage)
+    @dashboard ||= Ruote::Dashboard.new(worker)
+    @dashboard.configure('ruby_eval_allowed', true)
+    @dashboard
+  end
+  
+  def targets
+    @targets ||= Hash.new.with_indifferent_access
+  end
+  
+  def participants
+    @participants ||= Hash.new.with_indifferent_access
   end
   
   def definitions
-    @definitions ||= Hash.new.with_indifferent_access
+    # @definitions ||= Hash.new.with_indifferent_access
+    @definitions ||= []
   end
   
   def define(attributes, &block)
     attributes = Hash[attributes].with_indifferent_access
     Mastermind.logger.debug "defined process #{name}", attributes
-    definitions[attributes[:name]] = Ruote.process_definition(attributes, &block)
+    pdef = Ruote.process_definition(attributes, &block)
+    definition = Definition.new(pdef)
+    definitions << definition unless definitions.map(&:name).include?(definition.name)
   end
   
 end
 
 Mastermind.dashboard.context.logger.noisy = true
+
+# require our models
+Dir[Rails.root + "app/models/**/*.rb"].each do |file|
+  require file
+end
 
 # require our participants
 Dir[Rails.root + "app/participants/**/*.rb"].each do |file|

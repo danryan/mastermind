@@ -1,8 +1,10 @@
 class DefinitionsController < ApplicationController
   def index
+    @definitions = Definition.all
   end
 
   def show
+    @definition = Definition.find(params[:id])
   end
 
   def new
@@ -10,12 +12,12 @@ class DefinitionsController < ApplicationController
   end
 
   def create
-    @definition = Definition.new(definition: Ruote::Reader.read(params['definition']))
-    if @definition.save
-      redirect_to definitions_url
-    else
-      render :new
-    end
+    # @definition = Definition.new(definition: Ruote::Reader.read(params['definition']))
+    # if @definition.save
+    #   redirect_to definitions_url
+    # else
+    #   render :new
+    # end
   end
 
   def edit
