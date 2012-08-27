@@ -1,5 +1,13 @@
 Mastermind.define name: 'test' do
-  set 'availability_zones' => "${r:Mastermind::AWS::ZONES[d('region')].join(', ')}"
-  echo '${availability_zones}'
-  filter 'availability_zone', :in => Mastermind::AWS::ZONES.map{ |k,v| v }.flatten
+  citerator on: '$f:servers', to: 'server', merge: :highest, merge_type: :isolate do
+    ec2_server action: 'create',
+               image_id: '${f:server.image_id}',
+               flavor_id: '${f:server.flavor_id}',
+               key_name: '${f:server.key_name}',
+               region: '${f:server.region}',
+               availability_zone: '${f:server.availability_zone}',
+               groups: '$f:server.groups',
+               tags: '$f:server.tags'
+    
+  end         
 end

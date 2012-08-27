@@ -33,7 +33,7 @@ module Mastermind
   
   def define(attributes, &block)
     attributes = Hash[attributes].with_indifferent_access
-    Mastermind.logger.debug "defined process #{name}", attributes
+    Mastermind.logger.debug "defined process #{attributes[:name]}", attributes
     pdef = Ruote.process_definition(attributes, &block)
     definition = Definition.new(pdef)
     definitions << definition unless definitions.map(&:name).include?(definition.name)
@@ -41,10 +41,14 @@ module Mastermind
   
 end
 
+Mastermind.dashboard.add_service('task_observer', Mastermind::TaskObserver)
+
 Mastermind.dashboard.context.logger.noisy = true
+# Mastermind.dashboard.context.engine.on_error = 'failure'
+# Mastermind.dashboard.context.engine.on_terminate = 'success'
 
 # require our models
-Dir[Rails.root + "app/models/**/*.rb"].each do |file|
+Dir[Rails.root + "app/targets/**/*.rb"].each do |file|
   require file
 end
 

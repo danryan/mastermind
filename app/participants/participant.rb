@@ -25,6 +25,10 @@ class Participant
     @type
   end
   
+  def type
+    self.class.type
+  end
+  
   def self.register(type)
     @type = type
     Mastermind.dashboard.register_participant type, self, options
@@ -33,11 +37,15 @@ class Participant
 
   def on_workitem
     @target = Mastermind.targets[self.class.type].new(params)
-    
-    Mastermind.logger.debug "Processing #{self.class.type} workitem", params
+        
     execute(action)
     workitem.fields.merge!(target.attributes)
+    
     reply
+  end
+  
+  def on_reply
+    Mastermind.logger.debug participant: type, action: action, params: params, fields: fields
   end
   
   def params
@@ -46,10 +54,6 @@ class Participant
   
   def fields
     workitem.fields
-  end
-  
-  def merged
-    fields.merge(params)
   end
   
   def action
@@ -71,6 +75,8 @@ class Participant
   
   action :nothing do
     Mastermind.logger.debug "Doing nothing."
+    
+    {}
   end
   
   private

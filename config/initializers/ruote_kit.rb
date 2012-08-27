@@ -50,6 +50,6 @@ end
 
 # when true, the engine will be very noisy (stdout)
 #
-RuoteKit.dashboard.noisy = true
+# RuoteKit.dashboard.noisy = true
 
 # require Rails.root.join('app/models/workitem.rb')

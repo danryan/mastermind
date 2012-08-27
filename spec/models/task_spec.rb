@@ -1,5 +1,5 @@
 require 'spec_helper'
 
-describe "definitions/create.html.haml" do
+describe Task do
   pending "add some examples to (or delete) #{__FILE__}"
 end
