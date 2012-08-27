@@ -1,14 +1,19 @@
 class Launcher
-  attr_accessor :pdef, :fields, :variables
+  include Celluloid
+  
+  attr_accessor :definition, :fields, :variables, :pdef, :wfid
   
   def initialize(definition, fields, variables)
-    @definition = Mastermind.definitions[definition]
+    @definition = Definition.find(definition)
+    @pdef = @definition.pdef
     @fields = fields
     @variables = variables
+    @wfid = nil
   end
   
   def launch
-    Mastermind.dashboard.launch(pdef, fields, variables)
+    wfid = Mastermind.dashboard.launch(pdef, fields, variables)
+    
   end
   
 end

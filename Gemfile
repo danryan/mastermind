@@ -14,6 +14,11 @@ gem 'simple_form'
 gem 'json', :platform => :jruby
 gem 'multi_json', '~> 1.3.6'
 gem 'yajl-ruby', :platform => [ :ruby_18, :ruby_19 ]
+gem 'active_attr', '~> 0.6.0'
+gem 'celluloid'
+gem 'state_machine'
+
+gem 'ruby-graphviz', require: 'graphviz'
 
 # OpenSSL
 gem 'jruby-openssl', :platform => :jruby
@@ -23,13 +28,14 @@ gem 'ruote', git: 'https://github.com/jmettraux/ruote.git'
 gem 'ruote-redis', git: 'https://github.com/jmettraux/ruote-redis.git'
 gem 'ruote-kit', git: 'git://github.com/kennethkalmer/ruote-kit.git'
 
-gem 'active_attr', '~> 0.6.0'
 
 # Logging
 gem 'cabin', '~> 0.4.4'
 
 # Support libraries for participants
 gem 'fog', '~> 1.5.0'
+gem 'tinder'
+gem 'net-ssh'
 
 # Queue processing
 gem 'sidekiq', '~> 2.1.1'

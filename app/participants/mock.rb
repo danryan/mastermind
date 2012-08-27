@@ -9,6 +9,14 @@ class Participant::Mock < Participant
     {}
   end
   
+  action :modify do
+    requires :message
+    
+    Mastermind.logger.info target.message
+    
+    workitem.fields.merge!({ foo: "BAR!" })
+  end
+  
   action :fail do
     requires :message
     

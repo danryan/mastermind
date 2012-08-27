@@ -8,3 +8,7 @@
                  availability_zone: '${f:availability_zone}',
                  groups: '$f:groups',
                  tags: '$f:tags'
+                 
+                 
+                 
+                 
