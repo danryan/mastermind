@@ -29,22 +29,14 @@ class Definition
   def to_param
     name
   end
+  
+  def attributes
+    tree[2][-1][1].keys.reject{ |k|k == 'action' }
+  end
     
   def name
     tree[1]['name'] || tree[1].find { |k, v| v.nil? }.first
   end
-  
-  def self.find(name)
-    name = name.to_s
-    Mastermind.definitions.select { |d| d.name == name }.first
-  end
-  
-  def self.get(name)
-    find(name)
-  end
-  
-  def self.all
-    Mastermind.definitions
-  end
+
 end
 

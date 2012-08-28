@@ -1,10 +1,10 @@
 class DefinitionsController < ApplicationController
   def index
-    @definitions = Definition.all
+    @definitions = Mastermind.definitions
   end
 
   def show
-    @definition = Definition.find(params[:id])
+    @definition = Mastermind.definition(params[:id])
   end
 
   def new

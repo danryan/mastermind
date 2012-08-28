@@ -1,17 +1,18 @@
 Mastermind::Application.routes.draw do
-  get "definitions/index"
-
-  get "definitions/show"
-
-  get "definitions/new"
-
-  get "definitions/create"
-
-  get "definitions/edit"
-
-  get "definitions/update"
-
-  get "definitions/destroy"
+  resources :jobs do
+    resources :tasks do
+      member do
+        get 'run'
+        get 'error'
+        get 'complete'
+        get 'cancel'
+      end
+    end  
+  end
+  
+  resources :definitions
+  
+  root to: 'jobs#index'
 
   match '/_ruote' => RuoteKit::Application
   match '/_ruote/*path' => RuoteKit::Application

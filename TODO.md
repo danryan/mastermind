@@ -1,29 +1,20 @@
-# definitions should be class-based instead of a block in a file. 
+{
+  name: "bootstrap a new node",
+  tasks: [
+    { definition: "create_ec2_server" },
+    { definition: "bootstrap_chef" },
+    { definition: "notify_campfire" }
+  ]
+  fields: {
+    flavor_id: "m1.large",
+    image_id: "ami-1234abcd",
+  }
+}
 
-class SSH < Pdef
+job holds multiple tasks
+task maps to a ruote definition
+job fields are deep-merged to task fields
+task is launched
+results of task are stored in task.result
 
-  attr_reader :act
-  
-  def define
-    
-  end
-  
-end
-
-class Pdef
-  
-  def self.attr_reader(*attrs)
-    attrs.each do |attribute|
-      class_eval do
-        define_method attribute do
-          @attrs[attribute.to_s]
-        end
-        define_method "#{attribute}=" do |value|
-          @attrs[attribute.to_s] = value
-        end
-      end
-    end
-  end
-  
-  attr_reader :action
-end
+job results is hash of task results

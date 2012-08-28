@@ -8,4 +8,5 @@ class Target
     @type = type
     Mastermind.targets[type.to_sym] = self
   end
+  
 end
