@@ -21,26 +21,34 @@ Mastermind.define name: 'destroy_ec2_server' do
   filter 'instance_id', type: 'string', smatch: '^i-[a-f0-9]{8}$'
 
   ec2_server action: 'destroy',
-    instance_id: '${f:instance_id}'
+    instance_id: '${instance_id}',
+    region: '${region}'
+    
 end
 
 Mastermind.define name: 'stop_ec2_server' do
   filter 'instance_id', type: 'string', smatch: '^i-[a-f0-9]{8}$'
 
   ec2_server action: 'destroy',
-    instance_id: '${f:instance_id}'
+    instance_id: '${instance_id}',
+    region: '${region}'
+    
 end
 
 Mastermind.define name: 'start_ec2_server' do
   filter 'instance_id', type: 'string', smatch: '^i-[a-f0-9]{8}$'
   
   ec2_server action: 'start',
-    instance_id: '${f:instance_id}'
+    instance_id: '${instance_id}',
+    region: '${region}'
+    
 end
 
 Mastermind.define name: 'restart_ec2_server' do
   filter 'instance_id', type: 'string', smatch: '^i-[a-f0-9]{8}$'
   
   ec2_server action: 'restart',
-    instance_id: '${f:instance_id}'
+    instance_id: '${instance_id}',
+    region: '${region}'
+    
 end

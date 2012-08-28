@@ -5,19 +5,19 @@ module Participant::Server
     
     register :ec2_server
     
-    def connection
+    def connection(region=nil)
       Fog::Compute.new(
         provider: 'AWS',
         aws_access_key_id: options[:aws_access_key_id],
         aws_secret_access_key: options[:aws_secret_access_key],
-        region: params['region'] || 'us-east-1'
+        region: (region rescue (params['region'] || 'us-east-1'))
       )
     end
 
     action :create do
       requires :image_id, :flavor_id, :availability_zone, :groups, :key_name
 
-      server = connection.servers.create(
+      server = connection(target.region).servers.create(
         image_id: target.image_id,
         flavor_id: target.flavor_id,
         groups: target.groups,
@@ -33,7 +33,7 @@ module Participant::Server
     action :destroy do
       requires :instance_id
 
-      server = connection.servers.get(target.instance_id)
+      server = connection(target.region).servers.get(target.instance_id)
       server.destroy
 
       server.wait_for { state == 'terminated' }
@@ -44,7 +44,7 @@ module Participant::Server
     action :stop do
       requires :instance_id
 
-      server = connection.servers.get(target.instance_id)
+      server = connection(target.region).servers.get(target.instance_id)
       server.stop
 
       server.wait_for { state == 'stopped' }
@@ -55,7 +55,7 @@ module Participant::Server
     action :start do
       requires :instance_id 
 
-      server = connection.servers.get(target.instance_id)
+      server = connection(target.region).servers.get(target.instance_id)
       server.start
 
       server.wait_for { state == 'running' }
@@ -66,7 +66,7 @@ module Participant::Server
     action :restart do
       requires :instance_id 
 
-      server = connection.servers.get(target.instance_id)
+      server = connection(target.region).servers.get(target.instance_id)
       server.stop
 
       server.wait_for { state == 'stopped' }

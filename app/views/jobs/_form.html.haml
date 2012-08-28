@@ -1,0 +1,12 @@
+= simple_form_for @job do |f|
+  = f.input :name
+  
+  = f.simple_fields_for :tasks do |builder|
+    = render 'task', f: builder
+  = add_child_link "Add Tasks", :tasks
+  = new_child_fields_template f, :tasks
+  = new_child_attribute_template f, :tasks
+  = f.button :submit
+  
+:javascript
+  var definitions = #{Hash[Mastermind.definitions.map{|d| [d.name, d.attributes] }].to_json}

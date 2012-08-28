@@ -1,0 +1,1 @@
+Celluloid.logger = Rails.logger
