@@ -14,7 +14,8 @@ class Participant::Mock < Participant
     
     Mastermind.logger.info target.message
     
-    workitem.fields.merge!({ foo: "BAR!" })
+    # return a random hash
+    { foo: "BAR!", baz: "WAT!" }
   end
   
   action :fail do

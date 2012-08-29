@@ -14,3 +14,4 @@
 /log/*.log
 /tmp
 .env
+mastermind.wiki

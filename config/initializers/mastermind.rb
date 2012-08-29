@@ -72,9 +72,14 @@ module Mastermind
     Definition.new(Ruote.definition(name))
   end
   
-  def launch(job)
-    variables = {}
-    Mastermind.dashboard.launch(job.pdef, job.fields, variables)
+  def launch(job_or_pdef, fields={}, variables={})
+    if job_or_pdef.kind_of?(Job) && fields.empty? && variables.empty?
+      # someone launched a job manually
+      Mastermind.dashboard.launch(job.pdef, job.fields, { job_id: job.id })
+    else
+      # assume we're dealing with a ruote-compiled pdef
+      Mastermind.dashboard.launch(job_or_pdef, fields, variables)
+    end
   end
   
   def ps(wfid)
@@ -82,7 +87,7 @@ module Mastermind
   end
 end
 
-Mastermind.dashboard.add_service('task_observer', Mastermind::TaskObserver)
+Mastermind.dashboard.add_service('job_observer', Mastermind::JobObserver)
 
 # Mastermind.dashboard.context.logger.noisy = true
 # Mastermind.dashboard.context.engine.on_error = 'failure'

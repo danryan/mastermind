@@ -45,10 +45,7 @@ class Participant
     Mastermind.logger.debug "params", params
     
     validate!
-    execute!
-    
-    workitem.fields.merge!(target.attributes)
-    
+    execute!    
     reply
   end
 
@@ -104,40 +101,14 @@ class Participant
 
     action_to_execute = action.to_sym
 
-    # unless self.class.allowed_actions.include?(action_to_execute)
-    #   target.errors.add(:action, "is not valid")
-    # end
-
     begin
-      result = self.send(action_to_execute)
-      target.attributes = result
+      results = self.send(action_to_execute)
+      workitem.fields.merge!(results)
     rescue => e
       Mastermind.logger.error e.message, :backtrace => e.backtrace
-      target.errors.add(:exception, e.message)
       raise e
     end
   end
-
-  def self.required_attributes
-    @required_attributes ||= Hash.new.with_indifferent_access
-  end
-
-  def required_attributes
-    self.class.required_attributes[action]
-  end
-
-  # def requires(*args)
-  #   args.flatten!
-  #   
-  #   required_attributes = args
-  #   
-  #   args.each do |arg|
-  #     unless target.attributes[arg] || target.send(arg)
-  #       target.errors.add(arg, "can't be blank") 
-  #     end
-  #   end
-  #   
-  # end
 
   def requires(*args)
     missing = missing_attributes(args)

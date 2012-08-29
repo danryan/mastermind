@@ -1,13 +1,12 @@
 Mastermind::Application.routes.draw do
   resources :jobs do
-    resources :tasks do
-      member do
-        get 'run'
-        get 'error'
-        get 'complete'
-        get 'cancel'
-      end
-    end  
+    member do
+      get 'launch'
+      # get 'run'
+      # get 'error'
+      # get 'complete'
+      get 'cancel'
+    end
   end
   
   resources :definitions

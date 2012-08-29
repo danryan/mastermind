@@ -1,3 +1,11 @@
+Mastermind.define name: 'passing mock' do
+  pass_mock message: '${message}'
+end
+
+Mastermind.define name: 'modifying mock' do
+  modify_mock message: '${message}'
+end
+
 # Mastermind.define name: 'pass_mock' do
 #   mock action: 'pass',
 #     message: '${message}'
