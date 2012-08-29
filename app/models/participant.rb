@@ -109,7 +109,9 @@ class Participant
       raise e
     end
   end
-
+  
+  
+  # lovingly taken from (fog)[http://fog.io]
   def requires(*args)
     missing = missing_attributes(args)
     if missing.length == 1
