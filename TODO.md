@@ -1,14 +1,8 @@
 # bootstrapping a new node
-{
-  name: "create and destroy a new node",
-  tasks: [
-    "create_ec2_server",
-    "set :message => '${instance_id} created!'",
-    "notify_campfire",
-    "destroy_ec2_server",
-    "set :message => '${instance_id} destroyed!'",
-    "notify_campfire"
-  ],
+
+job = Job.new({
+  name: "create and destroy an instance",
+  definition: "create and destroy an instance",
   fields: {
     flavor_id: "t1.micro",
     image_id: "ami-fe5bd4ce",
@@ -18,65 +12,64 @@
     groups: [ "default" ],
     tags: { 'Name' => "foo.example.com" }
   }
-}
+})
+
+wfid = Mastermind.launch(job)
+ps = Mastermind.ps(wfid)
 
 # with per-task field overrides
 
-{
-  name: "create and destroy a new node",
-  tasks: [
-    :create_ec2_server,
-    :notify_campfire => { :message => '${instance_id} created!' },
-    :destroy_ec2_server,
-    :notify_campfire => { :message => '${instance_id} destroyed!' }
-  ],
+# job holds multiple tasks
+# task maps to a ruote definition
+# job fields are deep-merged to task fields
+# task is launched
+# results of task are stored in task.result
+# 
+# job results is hash of task results
+# 
+# Job.build_pdef
+
+Mastermind.define name: "passing mock" do
+  pass_mock :message => "${message}"
+end
+
+j = Job.new({
+  name: "passing!",
+  definition: "passing mock",
   fields: {
-    flavor_id: "t1.micro",
-    image_id: "ami-fe5bd4ce",
-    region: "us-west-2",
-    availability_zone: "us-west-2a",
-    key_name: "storm",
-    groups: [ "default" ],
-    tags: { 'Name': "foo.example.com" },
-    message: "${instance_id} created!"
+    message: "FOOOOOOO"
   }
+})
+
+wfid = Mastermind.launch(j.pdef, j.fields)
+ps = Mastermind.ps(wfid)
+
+
+fields = {
+  image_id: 'ami-fe5bd4ce',
+  flavor_id: 't1.micro',
+  key_name: 'storm',
+  region: 'us-west-2',
+  availability_zone: 'us-west-2a',
+  groups: [ "default" ],
+  tags: { 'Name' => 'foo.bar.com' }
 }
 
+pdef = Ruote.define do
+  create_ec2_server image_id: '${image_id}',
+    flavor_id: '${flavor_id}',
+    key_name: '${key_name}',
+    region: '${region}',
+    availability_zone: '${availability_zone}',
+    groups: '$f:groups',
+    tags: '$f:tags'
+    
+  notify_campfire message: "${instance_id} created!"
+  
+  destroy_ec2_server instance_id: '${instance_id}',
+    region: '${region}'
+    
+  notify_campfire message: "${instance_id} destroyed!"
+end
 
-63b62950
-{
-  name: "destroy a node",
-  tasks: [
-    "destroy_ec2_server",
-    "notify_campfire"
-  ],
-  fields: {
-    instance_id: "i-63b62950",
-    region: "us-west-2",
-    message: "${instance_id} destroyed!"
-  }
-}
-
-# mock job
-
-{
-  name: "mock job",
-  tasks: [
-    "pass_mock",
-    "pass_mock",
-    "pass_mock"
-  ],
-  fields: {
-    message: "#{["foo", "bar", "baz"].sample}!"
-  }
-}
-
-job holds multiple tasks
-task maps to a ruote definition
-job fields are deep-merged to task fields
-task is launched
-results of task are stored in task.result
-
-job results is hash of task results
-
-Job.build_pdef
+wfid = Mastermind.launch(pdef, fields)

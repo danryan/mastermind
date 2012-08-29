@@ -15,6 +15,7 @@ ActiveRecord::Schema.define(:version => 20120828020629) do
 
   create_table "jobs", :force => true do |t|
     t.string   "name"
+    t.string   "definition"
     t.text     "tasks"
     t.text     "fields"
     t.datetime "created_at",      :null => false

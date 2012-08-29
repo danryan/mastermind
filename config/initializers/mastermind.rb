@@ -10,14 +10,14 @@ module Ruote
       pdef = RubyDsl.create_branch('define', attributes, &block) 
 
       if (name = pdef[1]['name'])
-        definitions[name.to_sym] = pdef
+        definitions[name] = pdef
       end
 
       return pdef
     end
     
     def definition(name)
-      definitions[name.to_sym]
+      definitions[name]
     end
     
   end
@@ -60,7 +60,7 @@ module Mastermind
     attributes = Hash[attributes].with_indifferent_access
     Mastermind.logger.debug "defined process #{attributes[:name]}", attributes
     pdef = Ruote.define(attributes, &block)
-    Mastermind.dashboard.variables[attributes[:name].to_s] = pdef
+    # Mastermind.dashboard.variables[attributes[:name].to_s] = pdef
   end
   
   def definitions
@@ -72,6 +72,13 @@ module Mastermind
     Definition.new(Ruote.definition(name))
   end
   
+  def launch(job)
+    Mastermind.dashboard.launch(job.pdef, job.fieldsd, variables)
+  end
+  
+  def ps(wfid)
+    Mastermind.dashboard.process(wfid)
+  end
 end
 
 Mastermind.dashboard.add_service('task_observer', Mastermind::TaskObserver)
@@ -80,7 +87,7 @@ Mastermind.dashboard.add_service('task_observer', Mastermind::TaskObserver)
 # Mastermind.dashboard.context.engine.on_error = 'failure'
 # Mastermind.dashboard.context.engine.on_terminate = 'success'
 
-# require our models
+# require our targets
 Dir[Rails.root + "app/targets/**/*.rb"].each do |file|
   require file
 end
