@@ -5,7 +5,7 @@ module Participant::Remote
     register :ssh
     
     action :run do
-      requires :host, :user, :key_data, :command, :output
+      requires :host, :user, :key_data, :command
       
       target.output = run_ssh(target.command)
       
