@@ -37,8 +37,8 @@ Given the job fields:
 
 ```ruby
 {
-  name: "Dan Ryan",
-  titles: [ "Future Mayor of Lansing, MI", "Thoulght Leader" ]
+  :name => "Dan Ryan",
+  :titles => [ "Future Mayor of Lansing, MI", "Thoulght Leader" ]
 }
 ```
 
