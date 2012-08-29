@@ -2,34 +2,34 @@
 
 We need more than "ssh-in-a-for-loop" orchestration. Our infrastructure get more complex every day and we need a tool that can choreograph an intricate dance of services, servers and commands in a manageable way.
 
-## Intro
+# Intro
 
 Mastermind is an _ infrastructure workflow engine_. Its purpose is to provide the ability to compose and automate complex tasks with predefined and reproducible outcomes.
 
 Mastermind has four basic pieces: a job; a definition; a participant; and a target.
 
-### Job
+## Job
 
 A job is a template, tied to a definition. Jobs launch workflows.
 
-#### Attributes
+### Attributes
 
 * name (String) - The name of the job.
 * definition (String) - The name of the definition that this job will launch.
 * fields (Hash) - The initial attributes used by the definition, and ultimately each participant.
 
 
-### Definition
+## Definition
 
 A definition is the workflow itself. It's the document that describes exactly what tasks will be performed, and in what order.
 
-#### Attributes
+### Attributes
 
 * name (String) - The name of the definition.
 * pdef (Array) - The compiled process definition.
 
 
-#### Dollar notation ${...}
+### Dollar notation ${...}
 
 Mastermind scans strings in process definition for `${...}` placeholders and substitutes them for fields provided by the job or fields added by participants during the execution of the process. Any field interpolated by `${...}` will be the string representation of the value. If the literal value of the field is needed (for instance, if a field holds an array of values), use the `$f:` notation instead.
 
@@ -58,28 +58,25 @@ define :name => "assign titles" do
 end
 ```
 
-### Participant
+## Participant
 
 A participant is responsible for performing tasks as specified by the definition. There are many types of participants. A participant can provision a server, send notifications, or even execute remote commands.
 
-#### Attributes
+### Attributes
 
 Participant attributes vary depending on their purpose.
 
-### Target
+## Target
 
 A target is the resource that the participant modifies. The target can have a variety of attributes, depending on the participant's needs. The target performs the majority of validations to ensure the participant has the right fields to execute its actions.
 
-#### Attributes
+### Attributes
 
 Target attributes vary depending on their purpose.
 
-### Example - Create and destroy an EC2 instance, while notifying a Campfire room of each action performed.
-
-
 ## Example
 
-Here's a sample of a basic sysadmin workflow, as implemented by Mastermind.
+Here's a sample of a basic sysadmin workflow, as implemented by Mastermind. Here, we create and destroy an EC2 instance, while notifying a Campfire room of each action performed.
 
 ```ruby
 job = Job.new({
@@ -117,7 +114,7 @@ end
 Mastermind.launch(job)
 ```
 
-## Dependencies
+# Dependencies
 
 * Ruby >= 1.9.2
 * [Ruote](http://ruote.rubyforge.org)
@@ -126,13 +123,13 @@ Mastermind.launch(job)
 
 Mastermind uses PostgreSQL to store information about jobs, Redis as a queue for workflow processes, and Ruote as the underlying "operating system" for workflow execution.
 
-## API
+# API
 
 ```ruby
 raise NotImplementedError, "Documentation coming soon!"
 ```
 
-## Custom participants/targets 
+# Custom participants/targets 
 
 ```ruby
 raise NotImplementedError, "Documentation coming soon!"
