@@ -73,7 +73,8 @@ module Mastermind
   end
   
   def launch(job)
-    Mastermind.dashboard.launch(job.pdef, job.fieldsd, variables)
+    variables = {}
+    Mastermind.dashboard.launch(job.pdef, job.fields, variables)
   end
   
   def ps(wfid)
