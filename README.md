@@ -79,8 +79,7 @@ Target attributes vary depending on their purpose.
 
 ## Example
 
-Here's a brief sample of a common workflow, as implemented by Mastermind, that can be created from within a Rails console:
-
+Here's a sample of a basic sysadmin workflow, as implemented by Mastermind.
 
 ```ruby
 job = Job.new({
