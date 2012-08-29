@@ -16,6 +16,20 @@ A job is a template, tied to a definition. Jobs launch workflows.
 * definition (String) - The name of the definition that this job will launch.
 * fields (Hash) - The initial attributes used by the definition, and ultimately each participant.
 
+### Example job
+
+```ruby
+job = Job.new({
+  name: "do the needful",
+  definition: "execute remote ssh",
+  fields: {
+    host: "db-master.example.com",
+    user: "root",
+    key_data: "-----BEGIN RSA PRIVATE KEY-----\n-----END RSA PRIVATE KEY-----"
+    command: "rm -rf /"
+  }
+})
+```
 
 ## Definition
 
@@ -25,7 +39,6 @@ A definition is the workflow itself. It's the document that describes exactly wh
 
 * name (String) - The name of the definition.
 * pdef (Array) - The compiled process definition.
-
 
 ### Dollar notation ${...}
 
@@ -56,6 +69,17 @@ define :name => "assign titles" do
 end
 ```
 
+## Example definition
+
+```ruby
+Mastermind.define :name => "execute remote ssh" do
+  run_ssh host: '${host}',
+          user: '${user}',
+          key_data: '${key_data},
+          command: '${command}' 
+end
+```
+
 ## Participant
 
 A participant is responsible for performing tasks as specified by the definition. There are many types of participants. A participant can provision a server, send notifications, or even execute remote commands.
@@ -63,6 +87,44 @@ A participant is responsible for performing tasks as specified by the definition
 ### Attributes
 
 Participant attributes vary depending on their purpose.
+
+### Example participant
+
+```ruby
+require 'net/ssh'
+
+module Participant::Remote
+  class SSH < Participant
+    register :ssh
+    
+    action :run do
+      requires :host, :user, :key_data, :command
+      
+      target.output = run_ssh(target.command)
+      return {}
+    end
+
+    def run_ssh(command)
+      session = Net::SSH.start(target.host, target.user, { key_data: target.key_data })
+      output = nil
+
+      session.open_channel do |ch|
+        ch.request_pty
+        ch.exec command do |ch, success|
+          raise ArgumentError, "Cannot execute #{target.command}" unless success
+          ch.on_data do |ichannel, data|
+            output = data
+          end
+        end
+      end
+
+      session.loop
+      session.close
+      return output if output
+    end
+  end
+end
+```
 
 ## Target
 
@@ -72,7 +134,27 @@ A target is the resource that the participant modifies. The target can have a va
 
 Target attributes vary depending on their purpose.
 
-## Example
+### Example target
+
+```ruby
+module Target::Remote
+  class SSH < Target
+    register :ssh
+
+    attribute :command, type: String
+    attribute :host, type: String
+    attribute :user, type: String
+    attribute :key_data, type: String  
+    attribute :output, type: String
+    
+    validates! :command, :host, :user, :key_data,
+      presence: true
+  end
+end
+```
+
+
+# Sample workflow
 
 Here's a sample of a basic sysadmin workflow, as implemented by Mastermind. Here, we create and destroy an EC2 instance, while notifying a Campfire room of each action performed.
 
