@@ -2,9 +2,7 @@
 
 We need more than "ssh-in-a-for-loop" orchestration. Our infrastructure get more complex every day and we need a tool that can choreograph an intricate dance of services, servers and commands in a manageable way.
 
-# Intro
-
-Mastermind is an _ infrastructure workflow engine_. Its purpose is to provide the ability to compose and automate complex tasks with predefined and reproducible outcomes.
+Mastermind is an _infrastructure orchestration engine_. Its purpose is to provide the ability to compose and automate complex tasks with predefined and reproducible outcomes.
 
 Mastermind has four basic pieces: a job; a definition; a participant; and a target.
 
