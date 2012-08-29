@@ -5,7 +5,7 @@ module Target::Server
     attribute :image_id, type: String
     attribute :key_name, type: String
     attribute :ami_launch_index, type: Integer
-    attribute :availability_zone, type: String, default: 'us-east-1a'
+    attribute :availability_zone, type: String #, default: 'us-east-1a'
     attribute :block_device_mapping, type: Object, default: []
     attribute :client_token, type: String
     attribute :dns_name, type: String
@@ -25,7 +25,7 @@ module Target::Server
     attribute :public_ip_address, type: String
     attribute :ramdisk_id, type: String
     attribute :reason, type: String
-    attribute :region, type: String, default: 'us-east-1'
+    attribute :region, type: String #, default: 'us-east-1'
     attribute :root_device_name, type: String
     attribute :root_device_type, type: String
     attribute :security_group_ids, type: Object, default: []
@@ -39,5 +39,26 @@ module Target::Server
 
     alias_method :id, :instance_id
     alias_method :id=, :instance_id=
+    
+    validates! :image_id,
+      format: { with: /^ami-[a-f0-9]{8}$/ },
+      allow_nil: true
+      
+    validates! :flavor_id,
+      inclusion: { in: Mastermind::AWS::FLAVORS },
+      allow_nil: true
+      
+    validates! :availability_zone,
+      if: lambda { |s| s.region? && Mastermind::AWS::ZONES[s.region] },
+      inclusion: { in: lambda { |s| Mastermind::AWS::ZONES[s.region] } },
+      allow_blank: true
+      
+    validates! :region,
+      inclusion: { in: Mastermind::AWS::ZONES.keys }
+      
+    validates! :id, :instance_id, 
+      format: { with: /^i-[a-f0-9]{8}$/ },
+      allow_nil: true
+
   end
 end
