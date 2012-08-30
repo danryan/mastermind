@@ -4,7 +4,7 @@ We need more than "ssh-in-a-for-loop". Our infrastructure get more complex every
 
 Mastermind is an _infrastructure orchestration engine_. Its purpose is to provide the ability to compose and automate complex tasks with predefined and reproducible outcomes.
 
-Mastermind uses a special domain-specific language for its process definitions, but if you're familiar with (Ruby)[http://www.ruby-lang.org/], it should feel right at home.
+Mastermind uses a special domain-specific language for its process definitions, but if you're familiar with [Ruby](http://www.ruby-lang.org/), it should feel right at home.
 
 # Using Mastermind
 
@@ -159,13 +159,14 @@ Definition.new(
 #    []]]]
 ```
 
-You can even mix in plain old Ruby if you're feeling adventurous.
+You can even mix in plain old Ruby if you're feeling adventurous!
 ```ruby
 hosts = %w( host1.example.com host2.example.com host3.example.com )
 
 Definition.new(
   :name => "plain ol' ruby!",
   :content => %q{
+    hosts = %w( host1.example.com host2.example.com host3.example.com )
     hosts.each do |host|
       run_ssh :host     => host, 
               :user     => '${user}', 
