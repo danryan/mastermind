@@ -2,18 +2,19 @@ class Job < ActiveRecord::Base
   attr_accessible :name, :fields, :definition, :results
   
   serialize :fields, JSON
-  serialize :results, JSON
+  serialize :last_results, JSON
   
   validates :name, 
     presence: true, 
     uniqueness: true
   
   def pdef
-    Mastermind.definition(definition).pdef
+    defn = Definition.where(name: definition).first
+    defn.to_pdef
   end
   
   before_save :convert_fields_to_hash, 
-    if: Proc.new { |task| task.fields.is_a?(String) }
+    if: Proc.new { |job| job.fields.is_a?(String) }
 
   def launch(override_fields={}, *args)
     merged_fields = fields.deep_merge(override_fields)

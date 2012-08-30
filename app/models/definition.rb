@@ -1,51 +1,51 @@
-class Definition
+class Definition < ActiveRecord::Base
+  attr_accessible :content, :name
   
-  attr_accessor :pdef
+  has_paper_trail
   
-  def initialize(pdef)
-    @pdef = pdef
-  end
-
-  def revision
-    tree[1]['revision']
-  end
-
-  def tree
-    Ruote::Reader.read(pdef)
-  end
-
-  def tree_json
-    Rufus::Json.encode(tree)
-  end
-
-  def to_ruby
-    Ruote::Reader.to_ruby(tree).strip
+  validates :name, 
+    presence: true, 
+    uniqueness: true# ,
+    #     format: { with: /[]}
+  validates :content, 
+    presence: true
+    
+  def to_pdef
+    parse
   end
   
   def to_param
     name
   end
-
-  # needs fixing for multiple participant definitions
-  # def attributes
-  #   tree[2][-1][1].keys.reject{ |k|k == 'action' }
-  # end
-    
-  def name
-    tree[1]['name'] || tree[1].find { |k, v| v.nil? }.first
-  end
-
-  def as_json(options={})
-    to_hash
-  end
   
   def to_hash
     {
       name: name,
-      revision: revision,
-      pdef: pdef
+      content: content# ,
+      # pdef: to_pdef
     }
   end
+  
+  def as_json(options={})
+    to_hash
+  end
+  
+  def define(attributes, &block)
+    Ruote.define(attributes, &block)
+  end
+  
+  private
 
+  def parse
+    # `instance_eval` our string
+    # We pump it through #define first so the new Ruby 1.9 hash syntax gets
+    # converted to hash rockets so Ruote doesn't choke.
+    #
+    self.instance_eval <<-EOF
+self.define name: "#{name}" do
+#{content}
+end    
+    EOF
+  end
+  
 end
-

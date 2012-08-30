@@ -1,5 +1,6 @@
 class JobsController < ApplicationController
   respond_to :html, :json
+  
   def index
     @jobs = Job.all
     respond_with @jobs
@@ -37,6 +38,11 @@ class JobsController < ApplicationController
   end
 
   def destroy
+    @job = Job.find(params[:id])
+    if @job.destroy
+      flash[:notice] = "Job destroyed successfully."
+    end
+    respond_with @job
   end
   
   def launch

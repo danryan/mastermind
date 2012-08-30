@@ -1,8 +1,52 @@
 # Mastermind
 
-We need more than "ssh-in-a-for-loop" orchestration. Our infrastructure get more complex every day and we need a tool that can choreograph an intricate dance of services, servers and commands in a manageable way.
+We need more than "ssh-in-a-for-loop". Our infrastructure get more complex every day and we need a tool that can choreograph an intricate dance of services, servers and commands in a manageable way.
 
 Mastermind is an _infrastructure orchestration engine_. Its purpose is to provide the ability to compose and automate complex tasks with predefined and reproducible outcomes.
+
+Mastermind uses a special domain-specific language for its process definitions, but if you're familiar with (Ruby)[http://www.ruby-lang.org/], it should feel right at home.
+
+# Using Mastermind
+
+Here's an example of a basic sysadmin workflow, as implemented by Mastermind. Here, we create and destroy an EC2 instance, while notifying a Campfire room of each action performed.
+
+```ruby
+definition = Definition.new({
+  name: "create_and_destroy_ec2_server",
+    content: %q{
+    create_ec2_server image_id: '${image_id}',
+      flavor_id: '${flavor_id}',
+      key_name: '${key_name}',
+      region: '${region}',
+      availability_zone: '${availability_zone}',
+      groups: '$f:groups', 
+      tags: '$f:tags'
+
+    # ${instance_id} is a field added by the `create_ec2_server` action
+    notify_campfire message: "${instance_id} created!"
+
+    destroy_ec2_server instance_id: '${instance_id}', region: '${region}'
+
+    notify_campfire message: "${instance_id} destroyed!"
+  }
+})
+
+job = Job.new({
+  name: "new ec2 instance workflow",
+  definition: "create_and_destroy_ec2_server",
+  fields: {
+    flavor_id: "t1.micro",
+    image_id: "ami-fe5bd4ce",
+    region: "us-west-2",
+    availability_zone: "us-west-2a",
+    key_name: "storm",
+    groups: [ "default" ],
+    tags: { 'Name' => "foo.example.com" }
+  }
+})
+
+job.launch
+```
 
 Mastermind has four basic pieces: a job; a definition; a participant; and a target.
 
@@ -38,7 +82,7 @@ A definition is the workflow itself. It's the document that describes exactly wh
 ### Attributes
 
 * name (String) - The name of the definition.
-* pdef (Array) - The compiled process definition.
+* content (Array) - The process definition.
 
 ### Dollar notation ${...}
 
@@ -56,28 +100,103 @@ Given the job fields:
 The following definition...:
 
 ```ruby
-define :name => "assign titles" do
-  person :name => "${name}", :titles => "$f:titles"
-end
+person :name => "${name}", :titles => "$f:titles"
 ```
 
 ...gets compiled to:
 
 ```ruby
-define :name => "assign titles" do
-  person :name => "Dan Ryan", :titles => [ "Future Mayor of Lansing, MI", "Thoulght Leader" ]
-end
+person :name => "Dan Ryan", :titles => [ "Future Mayor of Lansing, MI", "Thoulght Leader" ]
 ```
 
 ## Example definition
 
 ```ruby
-Mastermind.define :name => "execute remote ssh" do
-  run_ssh host: '${host}',
-          user: '${user}',
-          key_data: '${key_data},
-          command: '${command}' 
-end
+Definition.new(
+  :name => "standard syntax",
+  :content => %q{
+    run_ssh host:     '${host}',
+            user:     '${user}',
+            key_data: '${key_data}',
+            command:  '${command}'
+  }
+).to_pdef
+
+# => compiled definition
+#
+# ["define",
+#  {"name"=>"watee"},
+#  [["run_ssh",
+#    {"host"=>"${host}",
+#     "user"=>"${user}",
+#     "key_data"=>"${key_data}",
+#     "command"=>"${command}"},
+#    []]]]
+```
+
+The previous example uses Ruby 1.9-style hash syntax. If you prefer the look of the "hash rocket", you are more than welcome to use it instead!
+
+```ruby
+Definition.new(
+  :name => "hash rockets",
+  :content => %q{
+    run_ssh :host     => '${host}', 
+            :user     => '${user}', 
+            :key_data => '${key_data}', 
+            :command  => '${command}'
+  }
+).to_pdef
+
+# => compiled definition
+#
+# ["define",
+#  {"name"=>"watee"},
+#  [["run_ssh",
+#    {"host"=>"${host}",
+#     "user"=>"${user}",
+#     "key_data"=>"${key_data}",
+#     "command"=>"${command}"},
+#    []]]]
+```
+
+You can even mix in plain old Ruby if you're feeling adventurous.
+```ruby
+hosts = %w( host1.example.com host2.example.com host3.example.com )
+
+Definition.new(
+  :name => "plain ol' ruby!",
+  :content => %q{
+    hosts.each do |host|
+      run_ssh :host     => host, 
+              :user     => '${user}', 
+              :key_data => '${key_data}', 
+              :command  => '${command}'
+    end
+  }
+).to_pdef
+
+# => compiled definition
+#
+# ["define",
+#  {"name"=>"watee"},
+#  [["run_ssh",
+#    {"host"=>"host1.example.com",
+#     "user"=>"${user}",
+#     "key_data"=>"${key_data}",
+#     "command"=>"${command}"},
+#    []],
+#   ["run_ssh",
+#    {"host"=>"host2.example.com",
+#     "user"=>"${user}",
+#     "key_data"=>"${key_data}",
+#     "command"=>"${command}"},
+#    []],
+#   ["run_ssh",
+#    {"host"=>"host3.example.com",
+#     "user"=>"${user}",
+#     "key_data"=>"${key_data}",
+#     "command"=>"${command}"},
+#    []]]]
 ```
 
 ## Participant
@@ -137,61 +256,27 @@ Target attributes vary depending on their purpose.
 ### Example target
 
 ```ruby
+# Modules are used as namespaces.
 module Target::Remote
+
+  # All targets inherit from Target
   class SSH < Target
+  
+    # We'll refer to this target elsewhere by the name we use to register it.
     register :ssh
 
+    # Various attributes of the target. The :type option typecasts the attribute.
     attribute :command, type: String
     attribute :host, type: String
     attribute :user, type: String
     attribute :key_data, type: String  
     attribute :output, type: String
     
+    # Validate the target to ensure we have the right details.
     validates! :command, :host, :user, :key_data,
       presence: true
   end
 end
-```
-
-
-# Sample workflow
-
-Here's a sample of a basic sysadmin workflow, as implemented by Mastermind. Here, we create and destroy an EC2 instance, while notifying a Campfire room of each action performed.
-
-```ruby
-job = Job.new({
-  name: "new ec2 instance workflow",
-  definition: "create and destroy an instance",
-  fields: {
-    flavor_id: "m1.large",
-    image_id: "ami-abcd1234",
-    region: "us-east-1",
-    availability_zone: "us-east-1a",
-    key_name: "default",
-    groups: [ "default" ],
-    tags: { 'Name' => "foo.example.com" }
-  }
-})
-
-Mastermind.define :name => "create and destroy an instance" do
-  create_ec2_server image_id: '${image_id}',
-    flavor_id: '${flavor_id}',
-    key_name: '${key_name}',
-    region: '${region}',
-    availability_zone: '${availability_zone}',
-    groups: '$f:groups', 
-    tags: '$f:tags'
-
-  # ${instance_id} is a field added by the `create_ec2_server` action
-  
-  notify_campfire message: "${instance_id} created!"
-
-  destroy_ec2_server instance_id: '${instance_id}', region: '${region}'
-
-  notify_campfire message: "${instance_id} destroyed!"
-end
-
-Mastermind.launch(job)
 ```
 
 # Dependencies
@@ -201,7 +286,7 @@ Mastermind.launch(job)
 * [PostgreSQL](http://www.postgresql.org)
 * [Redis](http://redis.io)
 
-Mastermind uses PostgreSQL to store information about jobs, Redis as a queue for workflow processes, and Ruote as the underlying "operating system" for workflow execution.
+Mastermind uses PostgreSQL to store jobs and process definitions, Redis as a queue for workflow processes, and Ruote as the underlying "operating system" for workflow execution.
 
 # API
 
