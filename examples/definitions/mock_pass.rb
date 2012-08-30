@@ -1,4 +1,1 @@
-Mastermind.define do
-  pass_mock message: '${message}',
-    stuff: '${stuff}'
-end
+pass_mock message: '${message}'

@@ -27,7 +27,8 @@ module Participant::Server
       )
       server.wait_for { ready? }
 
-      server.attributes
+      target.attributes = server.attributes
+      target.attributes
     end
 
     action :destroy do
@@ -38,7 +39,8 @@ module Participant::Server
 
       server.wait_for { state == 'terminated' }
 
-      server.attributes
+      target.attributes = server.attributes
+      target.attributes
     end
 
     action :stop do
@@ -49,7 +51,8 @@ module Participant::Server
 
       server.wait_for { state == 'stopped' }
 
-      server.attributes
+      target.attributes = server.attributes
+      target.attributes
     end
 
     action :start do
@@ -60,7 +63,8 @@ module Participant::Server
 
       server.wait_for { state == 'running' }
 
-      server.attributes
+      target.attributes = server.attributes
+      target.attributes
     end
 
     action :restart do
@@ -74,7 +78,8 @@ module Participant::Server
 
       server.wait_for { state == 'running' }
 
-      server.attributes
+      target.attributes = server.attributes
+      target.attributes
     end
     
   end
