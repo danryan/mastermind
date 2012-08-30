@@ -38,6 +38,8 @@ gem 'cabin', '~> 0.4.4'
 gem 'fog', '~> 1.5.0'
 gem 'tinder'
 gem 'net-ssh'
+gem 'net-ssh-multi'
+gem 'spice'
 
 # Queue processing
 gem 'sidekiq', '~> 2.1.1'
