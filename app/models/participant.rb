@@ -28,11 +28,33 @@ class Participant
   def type
     self.class.type
   end
+  
+  def regex
+    "^(.+)_#{type}$"
+  end
 
+  def as_json(options={})
+    to_hash
+  end
+  
+  def to_param
+    type
+  end
+  
+  def to_hash
+    {
+      type: type,
+      regex: regex,
+      class: self.class.name,
+      options: options,
+      actions: self.class.allowed_actions
+    }
+  end
+  
   def self.register(type)
     @type = type
-    Mastermind.dashboard.register_participant "^(.+)?#{type}", self, options
-    Mastermind.participants[Regexp.new(".+_#{type}")] = self
+    Mastermind.dashboard.register_participant "(.+)_#{type}", self, options
+    Mastermind.participants[Regexp.new("^(.+)_#{type}$")] = self
   end
 
   def on_workitem
@@ -83,6 +105,11 @@ class Participant
     @allowed_actions ||= []
   end
 
+  def allowed_actions
+    self.class.allowed_actions
+  end
+  
+  # default "do-nothing" action. Useful for debugging and tests
   action :nothing do
     Mastermind.logger.debug "Doing nothing."
 

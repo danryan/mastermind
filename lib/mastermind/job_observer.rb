@@ -14,7 +14,7 @@ class Mastermind::JobObserver < Ruote::ProcessObserver
   end
   
   def on_terminated(wfid, options)
-    @job.results = options[:workitem].fields
+    @job.last_results = options[:workitem].fields
     @job.last_success_at = DateTime.now
     @job.complete
   end
@@ -25,6 +25,7 @@ class Mastermind::JobObserver < Ruote::ProcessObserver
   end
   
   def on_cancel(wfid, options)
+    @job.last_canceled_at = DateTime.now
     @job.cancel
   end
 

@@ -5,6 +5,10 @@ module Ruote
       @definitions ||= {}
     end
     
+    def definitions=(defs)
+      @definitions = defs
+    end
+    
     def define(*attributes, &block)
 
       pdef = RubyDsl.create_branch('define', attributes, &block) 
@@ -57,15 +61,19 @@ module Mastermind
   # end
   
   def define(attributes, &block)
-    attributes = Hash[attributes].with_indifferent_access
-    Mastermind.logger.debug "defined process #{attributes[:name]}", attributes
-    pdef = Ruote.define(attributes, &block)
-    # Mastermind.dashboard.variables[attributes[:name].to_s] = pdef
+    # attributes = Hash[attributes].with_indifferent_access
+    # Mastermind.logger.debug "defined process #{attributes[:name]}", attributes
+    Ruote.define(attributes, &block)
   end
   
   def definitions
-    names = Ruote.definitions.keys
-    names.map { |name| Definition.new(Ruote.definition(name)) }
+    @definitions ||= Ruote.definitions.keys.map do |name|
+      Definition.new(Ruote.definition(name))
+    end
+  end
+  
+  def definitions=(defs)
+    @definitions = defs
   end
   
   def definition(name)
@@ -85,13 +93,20 @@ module Mastermind
   def ps(wfid)
     Mastermind.dashboard.process(wfid)
   end
+  
+  # def reload(name=nil)
+  #   case name.to_sym
+  #   when :definitions
+  #     Ruote.definitions = {}
+  #     definitions = []
+  #     Dir[Rails.root + "app/definitions/**/*.rb"].each { |file| load file }
+  #   end
+  # end
 end
 
 Mastermind.dashboard.add_service('job_observer', Mastermind::JobObserver)
 
-# Mastermind.dashboard.context.logger.noisy = true
-# Mastermind.dashboard.context.engine.on_error = 'failure'
-# Mastermind.dashboard.context.engine.on_terminate = 'success'
+Mastermind.dashboard.context.logger.noisy = ENV['MASTERMIND_NOISY'] || false
 
 # require our targets
 Dir[Rails.root + "app/targets/**/*.rb"].each do |file|
