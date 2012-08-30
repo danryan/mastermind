@@ -5,10 +5,6 @@ module Ruote
       @definitions ||= {}
     end
     
-    def definitions=(defs)
-      @definitions = defs
-    end
-    
     def define(*attributes, &block)
 
       pdef = RubyDsl.create_branch('define', attributes, &block) 
@@ -61,8 +57,6 @@ module Mastermind
   # end
   
   def define(attributes, &block)
-    # attributes = Hash[attributes].with_indifferent_access
-    # Mastermind.logger.debug "defined process #{attributes[:name]}", attributes
     Ruote.define(attributes, &block)
   end
   
@@ -94,14 +88,30 @@ module Mastermind
     Mastermind.dashboard.process(wfid)
   end
   
-  # def reload(name=nil)
-  #   case name.to_sym
-  #   when :definitions
-  #     Ruote.definitions = {}
-  #     definitions = []
-  #     Dir[Rails.root + "app/definitions/**/*.rb"].each { |file| load file }
-  #   end
-  # end
+  def parse(file)
+    # Convert our file path to a Pathname
+    #
+    pathname = Pathname.new(file)
+    
+    # Get the basename and extension of our file
+    #
+    basename, ext = pathname.basename.to_s, pathname.extname
+    
+    # Infer the name of our definition from the file name
+    #
+    name = basename.gsub(ext, '')
+
+    # `instance_eval` our string
+    # We pump it through Mastermind.define first so the new 1.9 hash syntax gets
+    # converted to hash rockets so Ruote doesn't choke.
+    #
+    Mastermind.instance_eval <<-EOF
+Mastermind.define name: "#{name}" do
+ #{File.open(file).read}
+end    
+    EOF
+  end
+
 end
 
 Mastermind.dashboard.add_service('job_observer', Mastermind::JobObserver)
@@ -119,7 +129,7 @@ Dir[Rails.root + "app/participants/**/*.rb"].each do |file|
 end
 
 # require our definitions
-Dir[Rails.root + "app/definitions/**/*.rb"].each do |file|
-  require file
-end
+# Dir[Rails.root + "app/definitions/**/*.rb"].each do |file|
+#   require file
+# end
 
