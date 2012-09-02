@@ -21,16 +21,9 @@ class Participant
     options[name] = value
   end
   
-  def self.inherited(sub)
+  def self.inherited(subclass)
     options.each do |key, value|
-      sub.instance_variable_set("@#{key}", value)
-      sub.instance_eval <<-EOF, __FILE__, __LINE__
-      def #{key}
-        @#{key}
-      end
-      EOF
-  
-      sub.options[key] = value
+      subclass.option key, value
     end
   end
 

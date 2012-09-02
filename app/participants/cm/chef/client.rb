@@ -9,7 +9,7 @@ module Participant::CM
     action :list do
       clients = connection.get('/clients').keys
       
-      { chef_nodes: clients }
+      clients
     end
     
   end
