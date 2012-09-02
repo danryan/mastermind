@@ -1,1 +1,356 @@
-<p>TEST!!!!!!!!!!</p>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640" />
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>Mastermind by danryan</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/danryan/mastermind">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>Mastermind</h1>
+            <h2>Infrastructure orchestration engine</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/danryan/mastermind/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/danryan/mastermind/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <p>We need more than "ssh-in-a-for-loop". Our infrastructure get more complex every day and we need a tool that can choreograph an intricate dance of services, servers and commands in a manageable way.</p>
+
+<p>Mastermind is an <em>infrastructure orchestration engine</em>. Its purpose is to provide the ability to compose and automate complex tasks with predefined and reproducible outcomes.</p>
+
+<p>Mastermind uses a special domain-specific language for its process definitions, but if you're familiar with <a href="http://www.ruby-lang.org/">Ruby</a>, it should feel right at home.</p>
+
+<h1>Using Mastermind</h1>
+
+<p>Here's an example of a basic sysadmin workflow, as implemented by Mastermind. Here, we create and destroy an EC2 instance, while notifying a Campfire room of each action performed.</p>
+
+<div class="highlight"><pre><span class="n">definition</span> <span class="o">=</span> <span class="no">Definition</span><span class="o">.</span><span class="n">new</span><span class="p">({</span>
+  <span class="nb">name</span><span class="p">:</span> <span class="s2">"create_and_destroy_ec2_server"</span><span class="p">,</span>
+    <span class="n">content</span><span class="p">:</span> <span class="sx">%q{</span>
+<span class="sx">    create_ec2_server image_id: '${image_id}',</span>
+<span class="sx">      flavor_id: '${flavor_id}',</span>
+<span class="sx">      key_name: '${key_name}',</span>
+<span class="sx">      region: '${region}',</span>
+<span class="sx">      availability_zone: '${availability_zone}',</span>
+<span class="sx">      groups: '$f:groups', </span>
+<span class="sx">      tags: '$f:tags'</span>
+
+<span class="sx">    # ${instance_id} is a field added by the `create_ec2_server` action</span>
+<span class="sx">    notify_campfire message: "${instance_id} created!"</span>
+
+<span class="sx">    destroy_ec2_server instance_id: '${instance_id}', region: '${region}'</span>
+
+<span class="sx">    notify_campfire message: "${instance_id} destroyed!"</span>
+<span class="sx">  }</span>
+<span class="p">})</span>
+
+<span class="n">job</span> <span class="o">=</span> <span class="no">Job</span><span class="o">.</span><span class="n">new</span><span class="p">({</span>
+  <span class="nb">name</span><span class="p">:</span> <span class="s2">"new ec2 instance workflow"</span><span class="p">,</span>
+  <span class="n">definition</span><span class="p">:</span> <span class="s2">"create_and_destroy_ec2_server"</span><span class="p">,</span>
+  <span class="n">fields</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">flavor_id</span><span class="p">:</span> <span class="s2">"t1.micro"</span><span class="p">,</span>
+    <span class="n">image_id</span><span class="p">:</span> <span class="s2">"ami-fe5bd4ce"</span><span class="p">,</span>
+    <span class="n">region</span><span class="p">:</span> <span class="s2">"us-west-2"</span><span class="p">,</span>
+    <span class="n">availability_zone</span><span class="p">:</span> <span class="s2">"us-west-2a"</span><span class="p">,</span>
+    <span class="n">key_name</span><span class="p">:</span> <span class="s2">"storm"</span><span class="p">,</span>
+    <span class="n">groups</span><span class="p">:</span> <span class="o">[</span> <span class="s2">"default"</span> <span class="o">]</span><span class="p">,</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="p">{</span> <span class="s1">'Name'</span> <span class="o">=&gt;</span> <span class="s2">"foo.example.com"</span> <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="n">job</span><span class="o">.</span><span class="n">launch</span>
+</pre></div>
+
+<p>Mastermind has four basic pieces: a job; a definition; a participant; and a target.</p>
+
+<h2>Job</h2>
+
+<p>A job is a template, tied to a definition. Jobs launch workflows.</p>
+
+<h3>Attributes</h3>
+
+<ul>
+<li>name (String) - The name of the job.</li>
+<li>definition (String) - The name of the definition that this job will launch.</li>
+<li>fields (Hash) - The initial attributes used by the definition, and ultimately each participant.</li>
+</ul><h3>Example job</h3>
+
+<div class="highlight"><pre><span class="n">job</span> <span class="o">=</span> <span class="no">Job</span><span class="o">.</span><span class="n">new</span><span class="p">({</span>
+  <span class="nb">name</span><span class="p">:</span> <span class="s2">"do the needful"</span><span class="p">,</span>
+  <span class="n">definition</span><span class="p">:</span> <span class="s2">"execute remote ssh"</span><span class="p">,</span>
+  <span class="n">fields</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">host</span><span class="p">:</span> <span class="s2">"db-master.example.com"</span><span class="p">,</span>
+    <span class="n">user</span><span class="p">:</span> <span class="s2">"root"</span><span class="p">,</span>
+    <span class="n">key_data</span><span class="p">:</span> <span class="s2">"-----BEGIN RSA PRIVATE KEY-----</span><span class="se">\n</span><span class="s2">-----END RSA PRIVATE KEY-----"</span>
+    <span class="n">command</span><span class="p">:</span> <span class="s2">"rm -rf /"</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+
+<h2>Definition</h2>
+
+<p>A definition is the workflow itself. It's the document that describes exactly what tasks will be performed, and in what order.</p>
+
+<h3>Attributes</h3>
+
+<ul>
+<li>name (String) - The name of the definition.</li>
+<li>content (Array) - The process definition.</li>
+</ul><h3>Dollar notation ${...}</h3>
+
+<p>Mastermind scans strings in process definition for <code>${...}</code> placeholders and substitutes them for fields provided by the job or fields added by participants during the execution of the process. Any field interpolated by <code>${...}</code> will be the string representation of the value. If the literal value of the field is needed (for instance, if a field holds an array of values), use the <code>$f:</code> notation instead.</p>
+
+<p>Given the job fields:</p>
+
+<div class="highlight"><pre><span class="p">{</span>
+  <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"Dan Ryan"</span><span class="p">,</span>
+  <span class="ss">:titles</span> <span class="o">=&gt;</span> <span class="o">[</span> <span class="s2">"Future Mayor of Lansing, MI"</span><span class="p">,</span> <span class="s2">"Thoulght Leader"</span> <span class="o">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>The following definition...:</p>
+
+<div class="highlight"><pre><span class="n">person</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"${name}"</span><span class="p">,</span> <span class="ss">:titles</span> <span class="o">=&gt;</span> <span class="s2">"$f:titles"</span>
+</pre></div>
+
+<p>...gets compiled to:</p>
+
+<div class="highlight"><pre><span class="n">person</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"Dan Ryan"</span><span class="p">,</span> <span class="ss">:titles</span> <span class="o">=&gt;</span> <span class="o">[</span> <span class="s2">"Future Mayor of Lansing, MI"</span><span class="p">,</span> <span class="s2">"Thoulght Leader"</span> <span class="o">]</span>
+</pre></div>
+
+<h2>Example definition</h2>
+
+<div class="highlight"><pre><span class="no">Definition</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+  <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"standard syntax"</span><span class="p">,</span>
+  <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="sx">%q{</span>
+<span class="sx">    run_ssh host:     '${host}',</span>
+<span class="sx">            user:     '${user}',</span>
+<span class="sx">            key_data: '${key_data}',</span>
+<span class="sx">            command:  '${command}'</span>
+<span class="sx">  }</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_pdef</span>
+
+<span class="c1"># =&gt; compiled definition</span>
+<span class="c1">#</span>
+<span class="c1"># ["define",</span>
+<span class="c1">#  {"name"=&gt;"watee"},</span>
+<span class="c1">#  [["run_ssh",</span>
+<span class="c1">#    {"host"=&gt;"${host}",</span>
+<span class="c1">#     "user"=&gt;"${user}",</span>
+<span class="c1">#     "key_data"=&gt;"${key_data}",</span>
+<span class="c1">#     "command"=&gt;"${command}"},</span>
+<span class="c1">#    []]]]</span>
+</pre></div>
+
+<p>The previous example uses Ruby 1.9-style hash syntax. If you prefer the look of the "hash rocket", you are more than welcome to use it instead!</p>
+
+<div class="highlight"><pre><span class="no">Definition</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+  <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"hash rockets"</span><span class="p">,</span>
+  <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="sx">%q{</span>
+<span class="sx">    run_ssh :host     =&gt; '${host}', </span>
+<span class="sx">            :user     =&gt; '${user}', </span>
+<span class="sx">            :key_data =&gt; '${key_data}', </span>
+<span class="sx">            :command  =&gt; '${command}'</span>
+<span class="sx">  }</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_pdef</span>
+
+<span class="c1"># =&gt; compiled definition</span>
+<span class="c1">#</span>
+<span class="c1"># ["define",</span>
+<span class="c1">#  {"name"=&gt;"watee"},</span>
+<span class="c1">#  [["run_ssh",</span>
+<span class="c1">#    {"host"=&gt;"${host}",</span>
+<span class="c1">#     "user"=&gt;"${user}",</span>
+<span class="c1">#     "key_data"=&gt;"${key_data}",</span>
+<span class="c1">#     "command"=&gt;"${command}"},</span>
+<span class="c1">#    []]]]</span>
+</pre></div>
+
+<p>You can even mix in plain old Ruby if you're feeling adventurous!</p>
+
+<div class="highlight"><pre><span class="n">hosts</span> <span class="o">=</span> <span class="sx">%w( host1.example.com host2.example.com host3.example.com )</span>
+
+<span class="no">Definition</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+  <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"plain ol' ruby!"</span><span class="p">,</span>
+  <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="sx">%q{</span>
+<span class="sx">    hosts = %w( host1.example.com host2.example.com host3.example.com )</span>
+<span class="sx">    hosts.each do |host|</span>
+<span class="sx">      run_ssh :host     =&gt; host, </span>
+<span class="sx">              :user     =&gt; '${user}', </span>
+<span class="sx">              :key_data =&gt; '${key_data}', </span>
+<span class="sx">              :command  =&gt; '${command}'</span>
+<span class="sx">    end</span>
+<span class="sx">  }</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_pdef</span>
+
+<span class="c1"># =&gt; compiled definition</span>
+<span class="c1">#</span>
+<span class="c1"># ["define",</span>
+<span class="c1">#  {"name"=&gt;"watee"},</span>
+<span class="c1">#  [["run_ssh",</span>
+<span class="c1">#    {"host"=&gt;"host1.example.com",</span>
+<span class="c1">#     "user"=&gt;"${user}",</span>
+<span class="c1">#     "key_data"=&gt;"${key_data}",</span>
+<span class="c1">#     "command"=&gt;"${command}"},</span>
+<span class="c1">#    []],</span>
+<span class="c1">#   ["run_ssh",</span>
+<span class="c1">#    {"host"=&gt;"host2.example.com",</span>
+<span class="c1">#     "user"=&gt;"${user}",</span>
+<span class="c1">#     "key_data"=&gt;"${key_data}",</span>
+<span class="c1">#     "command"=&gt;"${command}"},</span>
+<span class="c1">#    []],</span>
+<span class="c1">#   ["run_ssh",</span>
+<span class="c1">#    {"host"=&gt;"host3.example.com",</span>
+<span class="c1">#     "user"=&gt;"${user}",</span>
+<span class="c1">#     "key_data"=&gt;"${key_data}",</span>
+<span class="c1">#     "command"=&gt;"${command}"},</span>
+<span class="c1">#    []]]]</span>
+</pre></div>
+
+<h2>Participant</h2>
+
+<p>A participant is responsible for performing tasks as specified by the definition. There are many types of participants. A participant can provision a server, send notifications, or even execute remote commands.</p>
+
+<h3>Attributes</h3>
+
+<p>Participant attributes vary depending on their purpose.</p>
+
+<h3>Example participant</h3>
+
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">'net/ssh'</span>
+
+<span class="k">module</span> <span class="nn">Participant::Remote</span>
+  <span class="k">class</span> <span class="nc">SSH</span> <span class="o">&lt;</span> <span class="no">Participant</span>
+    <span class="n">register</span> <span class="ss">:ssh</span>
+
+    <span class="n">action</span> <span class="ss">:run</span> <span class="k">do</span>
+      <span class="n">requires</span> <span class="ss">:host</span><span class="p">,</span> <span class="ss">:user</span><span class="p">,</span> <span class="ss">:key_data</span><span class="p">,</span> <span class="ss">:command</span>
+
+      <span class="n">target</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">run_ssh</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
+      <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">run_ssh</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+      <span class="n">session</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">SSH</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="p">{</span> <span class="n">key_data</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">key_data</span> <span class="p">})</span>
+      <span class="n">output</span> <span class="o">=</span> <span class="kp">nil</span>
+
+      <span class="n">session</span><span class="o">.</span><span class="n">open_channel</span> <span class="k">do</span> <span class="o">|</span><span class="n">ch</span><span class="o">|</span>
+        <span class="n">ch</span><span class="o">.</span><span class="n">request_pty</span>
+        <span class="n">ch</span><span class="o">.</span><span class="n">exec</span> <span class="n">command</span> <span class="k">do</span> <span class="o">|</span><span class="n">ch</span><span class="p">,</span> <span class="n">success</span><span class="o">|</span>
+          <span class="k">raise</span> <span class="no">ArgumentError</span><span class="p">,</span> <span class="s2">"Cannot execute </span><span class="si">#{</span><span class="n">target</span><span class="o">.</span><span class="n">command</span><span class="si">}</span><span class="s2">"</span> <span class="k">unless</span> <span class="n">success</span>
+          <span class="n">ch</span><span class="o">.</span><span class="n">on_data</span> <span class="k">do</span> <span class="o">|</span><span class="n">ichannel</span><span class="p">,</span> <span class="n">data</span><span class="o">|</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">data</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="n">session</span><span class="o">.</span><span class="n">loop</span>
+      <span class="n">session</span><span class="o">.</span><span class="n">close</span>
+      <span class="k">return</span> <span class="n">output</span> <span class="k">if</span> <span class="n">output</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+<h2>Target</h2>
+
+<p>A target is the resource that the participant modifies. The target can have a variety of attributes, depending on the participant's needs. The target performs the majority of validations to ensure the participant has the right fields to execute its actions.</p>
+
+<h3>Attributes</h3>
+
+<p>Target attributes vary depending on their purpose.</p>
+
+<h3>Example target</h3>
+
+<div class="highlight"><pre><span class="c1"># Modules are used as namespaces.</span>
+<span class="k">module</span> <span class="nn">Target::Remote</span>
+
+  <span class="c1"># All targets inherit from Target</span>
+  <span class="k">class</span> <span class="nc">SSH</span> <span class="o">&lt;</span> <span class="no">Target</span>
+
+    <span class="c1"># We'll refer to this target elsewhere by the name we use to register it.</span>
+    <span class="n">register</span> <span class="ss">:ssh</span>
+
+    <span class="c1"># Various attributes of the target. The :type option typecasts the attribute.</span>
+    <span class="n">attribute</span> <span class="ss">:command</span><span class="p">,</span> <span class="n">type</span><span class="p">:</span> <span class="nb">String</span>
+    <span class="n">attribute</span> <span class="ss">:host</span><span class="p">,</span> <span class="n">type</span><span class="p">:</span> <span class="nb">String</span>
+    <span class="n">attribute</span> <span class="ss">:user</span><span class="p">,</span> <span class="n">type</span><span class="p">:</span> <span class="nb">String</span>
+    <span class="n">attribute</span> <span class="ss">:key_data</span><span class="p">,</span> <span class="n">type</span><span class="p">:</span> <span class="nb">String</span>  
+    <span class="n">attribute</span> <span class="ss">:output</span><span class="p">,</span> <span class="n">type</span><span class="p">:</span> <span class="nb">String</span>
+
+    <span class="c1"># Validate the target to ensure we have the right details.</span>
+    <span class="n">validates!</span> <span class="ss">:command</span><span class="p">,</span> <span class="ss">:host</span><span class="p">,</span> <span class="ss">:user</span><span class="p">,</span> <span class="ss">:key_data</span><span class="p">,</span>
+      <span class="n">presence</span><span class="p">:</span> <span class="kp">true</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+<h1>Dependencies</h1>
+
+<ul>
+<li>Ruby &gt;= 1.9.2</li>
+<li><a href="http://ruote.rubyforge.org">Ruote</a></li>
+<li><a href="http://www.postgresql.org">PostgreSQL</a></li>
+<li><a href="http://redis.io">Redis</a></li>
+</ul><p>Mastermind uses PostgreSQL to store jobs and process definitions, Redis as a queue for workflow processes, and Ruote as the underlying "operating system" for workflow execution.</p>
+
+<h1>API</h1>
+
+<div class="highlight"><pre><span class="k">raise</span> <span class="no">NotImplementedError</span><span class="p">,</span> <span class="s2">"Documentation coming soon!"</span>
+</pre></div>
+
+<h1>Custom participants/targets</h1>
+
+<div class="highlight"><pre><span class="k">raise</span> <span class="no">NotImplementedError</span><span class="p">,</span> <span class="s2">"Documentation coming soon!"</span>
+</pre></div>
+      </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/danryan">danryan</a> can be found on <a href="https://github.com/danryan/mastermind">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
+    </div>
+
+    
+  </body>
+</html>
