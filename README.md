@@ -176,6 +176,25 @@ Definition.new(
   }
 ).to_pdef
 
+# Same as:
+Definition.new(
+  :name => "plain ol' ruby!",
+  :content => %q{
+    run_ssh :host     => "host1.example.com", 
+            :user     => '${user}', 
+            :key_data => '${key_data}', 
+            :command  => '${command}'
+    run_ssh :host     => "host2.example.com", 
+            :user     => '${user}', 
+            :key_data => '${key_data}', 
+            :command  => '${command}'
+    run_ssh :host     => "host3.example.com", 
+            :user     => '${user}', 
+            :key_data => '${key_data}', 
+            :command  => '${command}'
+  }
+).to_pdef
+
 # => compiled definition
 #
 # ["define",
