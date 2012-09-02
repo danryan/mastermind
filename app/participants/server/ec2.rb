@@ -82,5 +82,17 @@ module Participant::Server
       target.attributes
     end
     
+    action :reboot do
+      requires :instance_id 
+
+      server = connection(target.region).servers.get(target.instance_id)
+      server.reboot
+
+      server.wait_for { state == 'running' }
+
+      target.attributes = server.attributes
+      target.attributes
+    end
+    
   end
 end
