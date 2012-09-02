@@ -20,6 +20,19 @@ class Participant
     EOF
     options[name] = value
   end
+  
+  def self.inherited(sub)
+    options.each do |key, value|
+      sub.instance_variable_set("@#{key}", value)
+      sub.instance_eval <<-EOF, __FILE__, __LINE__
+      def #{key}
+        @#{key}
+      end
+      EOF
+  
+      sub.options[key] = value
+    end
+  end
 
   def self.type
     @type
