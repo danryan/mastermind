@@ -97,7 +97,7 @@ class Participant
   end
   
   def result_field?
-    !!workitem.fields['params']['result_field']
+    !!result_field
   end
   
   def fields
