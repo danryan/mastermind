@@ -91,7 +91,15 @@ class Participant
   def params
     workitem.fields['params']
   end
-
+  
+  def result_field
+    workitem.fields['params']['result_field']
+  end
+  
+  def result_field?
+    !!workitem.fields['params']['result_field']
+  end
+  
   def fields
     workitem.fields.except('params')
   end
@@ -143,7 +151,11 @@ class Participant
 
     begin
       results = self.send(action_to_execute)
-      workitem.fields.merge!(results)
+      if result_field?
+        workitem.fields[result_field] = results
+      else
+        workitem.fields.merge!(results)
+      end
     rescue => e
       Mastermind.logger.error e.message, :backtrace => e.backtrace
       raise e

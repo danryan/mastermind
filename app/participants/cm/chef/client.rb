@@ -3,12 +3,13 @@ require Rails.root + 'app/participants/cm/chef'
 
 module Participant::CM
   class Chef::Client < Chef
+    
     register :chef_client
     
     action :list do
-      chef_nodes = connection.get('/nodes').keys
+      clients = connection.get('/clients').keys
       
-      { chef_nodes: chef_nodes }
+      { chef_nodes: clients }
     end
     
   end
