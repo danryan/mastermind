@@ -15,7 +15,7 @@ gem 'paper_trail'
 # JSON
 gem 'json', :platform => :jruby
 gem 'multi_json', '~> 1.3.6'
-gem 'yajl-ruby', :platform => [ :ruby_18, :ruby_19 ]
+gem 'yajl-ruby'
 gem 'active_attr', '~> 0.6.0'
 gem 'celluloid'
 gem 'state_machine'
