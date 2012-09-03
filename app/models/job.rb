@@ -25,6 +25,10 @@ class Job < ActiveRecord::Base
     super
   end
   
+  def ps
+    Mastermind.ps(last_wfid)
+  end
+  
   state_machine :initial => :pending do
     state :pending
     state :launched
