@@ -48,7 +48,7 @@ end
 Mastermind.dashboard.add_service('job_observer', Mastermind::JobObserver)
 
 Mastermind.dashboard.context.logger.noisy = ENV['MASTERMIND_NOISY'] || false
-Mastermind.logger.level = ENV['MASTERMIND_LOG_LEVEL'].to_sym || :info
+Mastermind.logger.level = ENV['MASTERMIND_LOG_LEVEL'].try(:to_sym) || :info
 
 # require our targets
 Dir[Rails.root + "app/targets/**/*.rb"].each do |file|
@@ -60,3 +60,4 @@ Dir[Rails.root + "app/participants/**/*.rb"].each do |file|
   require file
 end
 
+JSON.create_id = nil

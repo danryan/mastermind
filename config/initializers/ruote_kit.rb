@@ -9,8 +9,10 @@
 # we will use yajl for json encoding/decoding
 # you may whish to use another one (json, json_pure) if yajl is not available
 #
-require 'yajl'
-Rufus::Json.backend = :yajl
+# require 'yajl'
+# Rufus::Json.backend = :yajl
+
+JSON.create_id = nil
 
 RuoteKit.engine = Mastermind.dashboard
 
