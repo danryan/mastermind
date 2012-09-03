@@ -3,14 +3,16 @@ class Job < ActiveRecord::Base
   
   serialize :fields, JSON
   serialize :last_results, JSON
+  serialize :current_fields, JSON
   
   validates :name, 
     presence: true, 
     uniqueness: true
   
+  belongs_to :definition
+  
   def pdef
-    defn = Definition.where(name: definition).first
-    defn.to_pdef
+    definition.to_pdef
   end
   
   before_save :convert_fields_to_hash, 

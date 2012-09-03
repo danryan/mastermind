@@ -1,6 +1,8 @@
 class Definition < ActiveRecord::Base
   attr_accessible :content, :name
   
+  has_many :jobs
+  
   has_paper_trail
   
   validates :name, 

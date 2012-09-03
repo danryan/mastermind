@@ -2,7 +2,7 @@ class CreateJobs < ActiveRecord::Migration
   def change
     create_table :jobs do |t|
       t.string :name
-      t.string :definition
+      t.references :definition
       t.text :fields, default: {}.to_json
       t.text :last_results, default: {}.to_json
       t.string :last_wfid

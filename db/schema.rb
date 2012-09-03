@@ -22,9 +22,10 @@ ActiveRecord::Schema.define(:version => 20120830045243) do
 
   create_table "jobs", :force => true do |t|
     t.string   "name"
-    t.string   "definition"
+    t.integer  "definition_id"
     t.text     "fields",           :default => "{}"
     t.text     "last_results",     :default => "{}"
+    t.text     "current_fields",   :default => "{}"
     t.string   "last_wfid"
     t.string   "state"
     t.datetime "created_at",                         :null => false
