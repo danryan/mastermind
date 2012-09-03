@@ -7,7 +7,7 @@ module Participant::CM
     
     option :server_url, ENV['CHEF_SERVER_URL']
     option :client_name, ENV['CHEF_CLIENT_NAME']
-    option :client_key, Spice.read_key_file(File.expand_path(ENV['CHEF_CLIENT_KEY']))
+    option :client_key, ENV['CHEF_CLIENT_KEY']
     
     def connection
       Spice::Connection.new(

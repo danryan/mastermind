@@ -7,8 +7,7 @@ module Participant::CM
     register :chef_node
     
     action :list do
-      chef_nodes = connection.get('/nodes').keys
-      
+      chef_nodes = connection.nodes
       chef_nodes
     end
     
