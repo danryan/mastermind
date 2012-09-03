@@ -59,8 +59,8 @@ class Participant
   
   def self.register(type)
     @type = type
-    Mastermind.dashboard.register_participant "(.+)_#{type}", self, options
-    Mastermind.participants[Regexp.new("^(.+)_#{type}$")] = self
+    Mastermind.dashboard.register_participant "(.+)_#{type}[s]?", self, options
+    Mastermind.participants[Regexp.new("^(.+)_#{type}s?$")] = self
   end
 
   def on_workitem
