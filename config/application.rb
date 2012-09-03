@@ -29,6 +29,7 @@ module Mastermind
       cabin = Cabin::Channel.new 
       cabin.subscribe(STDOUT)
       config.logger = cabin
+      # config.logger.level = :debug
     end
     
     # Settings in config/environments/* take precedence over those specified here.

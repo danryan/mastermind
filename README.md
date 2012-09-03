@@ -71,7 +71,57 @@ See [Targets in the wiki](https://github.com/danryan/mastermind/wiki/Targets)
 
 Mastermind uses PostgreSQL to store jobs and process definitions, Redis as a queue for workflow processes, and Ruote as the underlying "operating system" for workflow execution.
 
+# Configuration
+
+Mastermind uses the following environment variables for configuration:
+
+## Mastermind settings
+
+* `MASTERMIND_NOISY` - Whether workflow debug info should be emitted to the logs. Default is `false`.
+* `MASTERMIND_LOG_LEVEL`="info" - The Mastermind log level. Default is `info`.
+ 
+## AWS participants
+
+* `AWS_ACCESS_KEY_ID` - AWS access key id
+* `AWS_SECRET_ACCESS_KEY` - AWS secret access key
+
+## Campfire participant
+
+* `CAMPFIRE_ROOM` - Campfire room ID
+* `CAMPFIRE_ACCOUNT` - Campfire account name
+* `CAMPFIRE_TOKEN` - Campfire API token
+
+## Chef participants 
+* `CHEF_SERVER_URL` - Chef server URL. Remember to include the port if applicable.
+* `CHEF_CLIENT_NAME` - Chef client name
+* `CHEF_CLIENT_KEY` - Chef client key (the key itself, not the path). Example: `cat /Users/admin/.chef/admin.pem`
+
+# Deployment
+
+## Heroku
+
+```bash
+heroku create -s cedar
+heroku addons:add heroku-postgresql:dev
+heroku pg:promote HEROKU_POSTGRESQL_DEV_NAME
+heroku addons:add redistogo
+heroku config:set GRAPHITE_URL=[...]
+heroku config:set GRAPHITE_AUTH=[...]
+heroku config:set CAMPFIRE_ACCOUNT=[...]
+heroku config:set CAMPFIRE_ROOM=[...]
+heroku config:set CAMPFIRE_TOKEN=[...]
+heroku config:set PAGERDUTY_API_KEY=[...]
+git push heroku master
+heroku run rake db:migrate
+heroku scale web=1
+heroku scale worker=1
+```
+
 # API
+
+Mastermind provides a REST-ish JSON API for job and definition management. Please see the [API wiki](https://github.com/danryan/mastermind/wiki/API) for details.
+
+# API Client
 
 ```ruby
 raise NotImplementedError, "Documentation coming soon!"

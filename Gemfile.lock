@@ -341,7 +341,6 @@ DEPENDENCIES
   bootstrap-sass
   cabin (~> 0.4.4)
   capybara (>= 1.1.2)
-  celluloid
   coffee-rails (~> 3.2.1)
   database_cleaner (>= 0.7.2)
   email_spec (>= 1.2.1)

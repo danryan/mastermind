@@ -1,1 +1,1 @@
-Celluloid.logger = Rails.logger
+# Celluloid.logger = Rails.logger

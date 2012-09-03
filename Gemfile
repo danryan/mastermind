@@ -17,7 +17,7 @@ gem 'json', :platform => :jruby
 gem 'multi_json', '~> 1.3.6'
 gem 'yajl-ruby'
 gem 'active_attr', '~> 0.6.0'
-gem 'celluloid'
+# gem 'celluloid'
 gem 'state_machine'
 
 gem 'ruby-graphviz', require: 'graphviz'
