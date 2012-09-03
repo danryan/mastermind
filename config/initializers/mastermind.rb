@@ -12,8 +12,8 @@ module Mastermind
   def dashboard
     url = ENV['REDIS_URL'] || ENV['REDISTOGO_URL'] || 'redis://localhost:6379/1'
     storage = Ruote::Redis::Storage.new(::Redis.connect(url: url, thread_safe: true))
-    worker = Ruote::Worker.new(storage)
-    @dashboard ||= Ruote::Dashboard.new(worker)
+    # worker = Ruote::Worker.new(storage)
+    @dashboard ||= Ruote::Dashboard.new(storage)
     @dashboard.configure('ruby_eval_allowed', true)
     @dashboard
   end
