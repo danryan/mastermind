@@ -105,12 +105,16 @@ heroku create -s cedar
 heroku addons:add heroku-postgresql:dev
 heroku pg:promote HEROKU_POSTGRESQL_DEV_NAME
 heroku addons:add redistogo
-heroku config:set GRAPHITE_URL=[...]
-heroku config:set GRAPHITE_AUTH=[...]
+heroku config:set MASTERMIND_NOISY=[...]
+heroku config:set MASTERMIND_LOG_LEVEL=[...]
+heroku config:set AWS_ACCESS_KEY_ID=[...]
+heroku config:set AWS_SECRET_ACCESS_KEY=[...]
 heroku config:set CAMPFIRE_ACCOUNT=[...]
 heroku config:set CAMPFIRE_ROOM=[...]
 heroku config:set CAMPFIRE_TOKEN=[...]
-heroku config:set PAGERDUTY_API_KEY=[...]
+heroku config:set CHEF_SERVER_URL=[...]
+heroku config:set CHEF_CLIENT_NAME=[...]
+heroku config:set CHEF_CLIENT_KEY=[...]
 git push heroku master
 heroku run rake db:migrate
 heroku scale web=1
