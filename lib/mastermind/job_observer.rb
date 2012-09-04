@@ -29,12 +29,12 @@ class Mastermind::JobObserver < Ruote::ProcessObserver
     @job.cancel
   end
   
-  def on_dispatch(wfid, options)
-    Mastermind.logger.debug "dispatched process", params: options[:workitem].fields['params']
-  end
-  
-  def on_receive(wfid, options)
-    Mastermind.logger.debug "received workitem", fields: options[:workitem].fields
-    @job.current_fields = options[:workitem].fields
-  end
+  # def on_dispatch(wfid, options)
+  #   Mastermind.logger.debug "dispatched process", params: options[:workitem].fields['params']
+  # end
+  # 
+  # def on_receive(wfid, options)
+  #   Mastermind.logger.debug "received workitem", fields: options[:workitem].fields
+  #   @job.current_fields = options[:workitem].fields
+  # end
 end

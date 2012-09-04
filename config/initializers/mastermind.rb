@@ -29,7 +29,7 @@ module Mastermind
   def launch(job_or_pdef, fields={}, variables={})
     if job_or_pdef.kind_of?(Job) && fields.empty? && variables.empty?
       # someone launched a job manually
-      Mastermind.dashboard.launch(job.pdef, job.fields, { job_id: job.id })
+      Mastermind.dashboard.launch(job_or_pdef.pdef, job_or_pdef.fields, { job_id: job_or_pdef.id })
     else
       # assume we're dealing with a ruote-compiled pdef
       Mastermind.dashboard.launch(job_or_pdef, fields, variables)

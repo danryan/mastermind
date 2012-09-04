@@ -102,7 +102,8 @@ class Participant
   end
 
   def action
-    params['ref'].split('_').first
+    # params['ref'].split('_').first
+    params['ref'].gsub("_#{type}", '')
     # workitem.field_or_param(:action)
   end
 
