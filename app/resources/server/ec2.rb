@@ -1,5 +1,5 @@
-module Target::Server
-  class EC2 < Target
+module Resource::Server
+  class EC2 < Resource
     register :ec2_server
 
     attribute :image_id, type: String

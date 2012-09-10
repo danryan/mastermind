@@ -4,7 +4,7 @@ class Participant::Mock < Participant
   action :pass do
     requires :message
     
-    Mastermind.logger.info target.message
+    Mastermind.logger.info resource.message
     
     {}
   end
@@ -12,7 +12,7 @@ class Participant::Mock < Participant
   action :modify do
     requires :message
     
-    Mastermind.logger.info target.message
+    Mastermind.logger.info resource.message
     
     # return a random hash
     { foo: "BAR!", baz: "WAT!" }

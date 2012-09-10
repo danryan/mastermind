@@ -1,5 +1,5 @@
-module Target::Remote
-  class HTTP < Target
+module Resource::Remote
+  class HTTP < Resource
     register :http
 
     attribute :payload, type: String

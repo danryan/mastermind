@@ -7,7 +7,7 @@ module Participant::Remote
     action :run do
       requires :hosts, :user, :key_data, :command
       
-      output = run_ssh(target.command)
+      output = run_ssh(resource.command)
       
       { output: output }
     end
@@ -19,10 +19,10 @@ module Participant::Remote
       session = Net::SSH::Multi.start()
 
       opts = {}
-      opts[:user] = target.user    
-      opts[:key_data] = [target.key_data]
+      opts[:user] = resource.user    
+      opts[:key_data] = [resource.key_data]
           
-      target.hosts.each do |host|
+      resource.hosts.each do |host|
         session.use(host, opts)
       end
         

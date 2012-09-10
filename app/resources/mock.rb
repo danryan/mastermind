@@ -1,4 +1,4 @@
-class Target::Mock < Target
+class Resource::Mock < Resource
   register :mock
   
   attribute :message, type: String

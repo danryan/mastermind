@@ -1,5 +1,5 @@
-module Target::Notification
-  class Campfire < Target
+module Resource::Notification
+  class Campfire < Resource
     register :campfire
 
     attribute :message, type: String

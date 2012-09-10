@@ -7,7 +7,7 @@ module Participant::Remote
     action :run do
       requires :host, :user, :key_data, :command, :output
       
-      target.output = run_ssh(target.command)
+      resource.output = run_ssh(resource.command)
       
       {}
     end

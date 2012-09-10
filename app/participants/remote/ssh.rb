@@ -7,13 +7,13 @@ module Participant::Remote
     action :run do
       requires :host, :user, :key_data, :command
       
-      output = run_ssh(target.command)
+      output = run_ssh(resource.command)
       
       { output: output }
     end
 
     def run_ssh(command)
-      session = Net::SSH.start(target.host, target.user, { key_data: target.key_data })
+      session = Net::SSH.start(resource.host, resource.user, { key_data: resource.key_data })
       output = nil
 
       session.open_channel do |ch|

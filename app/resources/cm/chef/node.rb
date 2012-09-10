@@ -1,7 +1,7 @@
-require Rails.root + 'app/targets/cm/chef'
+require Rails.root + 'app/resources/cm/chef'
 
-module Target::CM
-  class Chef::Node < Target
+module Resource::CM
+  class Chef::Node < Resource
     register :chef_node
 
     attribute :name, type: String

@@ -1,4 +1,4 @@
-class Target
+class Resource
   include ActiveAttr::Model
   include ActiveAttr::TypecastedAttributes
     
@@ -6,7 +6,7 @@ class Target
 
   def self.register(type)
     @type = type
-    Mastermind.targets[type.to_sym] = self
+    Mastermind.resources[type.to_sym] = self
   end
   
 end

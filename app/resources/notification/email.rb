@@ -1,5 +1,5 @@
-module Target::Notification
-  class Email < Target
+module Resource::Notification
+  class Email < Resource
     register :email
 
     attribute :subject, type: String

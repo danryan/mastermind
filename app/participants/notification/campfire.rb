@@ -21,7 +21,7 @@ module Participant::Notification
       
       begin
         timeout(3) do
-          room.speak("#{target.source}: #{target.message}")
+          room.speak("#{resource.source}: #{resource.message}")
         end
       rescue Timeout::Error => e
         Mastermind.logger.error message: e.message, backtrace: e.backtrace

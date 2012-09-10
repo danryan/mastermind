@@ -1,14 +1,14 @@
-module Target::Remote
-  class SSHMulti < Target
-    register :ssh_multi
+module Resource::Remote
+  class SSH < Resource
+    register :ssh
 
     attribute :command, type: String
-    attribute :hosts, type: Object
+    attribute :host, type: String
     attribute :user, type: String
     attribute :key_data, type: String  
     attribute :output, type: String
     
-    validates! :command, :hosts, :user, :key_data,
+    validates! :command, :host, :user, :key_data,
       presence: true
   end
 end

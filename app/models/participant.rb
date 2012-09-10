@@ -1,7 +1,7 @@
 class Participant
   include Ruote::LocalParticipant
 
-  attr_accessor :target
+  attr_accessor :resource
 
   def self.options
     @options ||= Hash.new.with_indifferent_access
@@ -66,7 +66,7 @@ class Participant
   def on_workitem
     Mastermind.logger.debug participant: type, action: action, params: params, fields: fields
 
-    @target = Mastermind.targets[self.class.type].new(params)
+    @resource = Mastermind.resources[self.class.type].new(params)
 
     Mastermind.logger.debug "attributes", attributes
     Mastermind.logger.debug "fields", fields
@@ -134,12 +134,12 @@ class Participant
   private
 
   def validate!
-    target.valid?
+    resource.valid?
   end
   
   def execute!
     # clear out any previously encountered errors
-    target.errors.clear
+    resource.errors.clear
 
     action_to_execute = action.to_sym
 
@@ -170,7 +170,7 @@ class Participant
   def missing_attributes(args)
     missing = []
     args.each do |arg|
-      unless target.send("#{arg}") || target.attributes.has_key?(arg.to_s) && target[arg]
+      unless resource.send("#{arg}") || resource.attributes.has_key?(arg.to_s) && resource[arg]
         missing << arg
       end
     end
