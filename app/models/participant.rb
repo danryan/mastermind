@@ -49,11 +49,11 @@ class Participant
   
   def to_hash
     {
-      type: type,
-      regex: regex,
-      class: self.class.name,
-      options: options,
-      actions: self.class.allowed_actions
+      :type => type,
+      :regex => regex,
+      :class => self.class.name,
+      :options => options,
+      :actions => self.class.allowed_actions
     }
   end
   
@@ -64,7 +64,7 @@ class Participant
   end
 
   def on_workitem
-    Mastermind.logger.debug provider: type, action: action, params: params, fields: fields
+    Mastermind.logger.debug :provider => type, :action => action, :params => params, :fields => fields
 
     @resource = Mastermind.resources[self.class.type].new(params)
 

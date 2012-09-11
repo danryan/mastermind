@@ -16,12 +16,8 @@ module Provider::Notification
     #   delivery_method :smtp, options
     # end
     
-    action :notify do
-      requires :subject, :body, :from, :to
-      
+    action :notify do      
       # TODO
-      
-      {}
     end
 
   end

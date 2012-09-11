@@ -7,10 +7,10 @@ module Provider::Server
     
     def connection(region=nil)
       Fog::Compute.new(
-        provider: 'AWS',
-        aws_access_key_id: options[:aws_access_key_id],
-        aws_secret_access_key: options[:aws_secret_access_key],
-        region: (region rescue (params['region'] || 'us-east-1'))
+        :provider => 'AWS',
+        :aws_access_key_id => options[:aws_access_key_id],
+        :aws_secret_access_key => options[:aws_secret_access_key],
+        :region => (region rescue (params['region'] || 'us-east-1'))
       )
     end
 
@@ -27,20 +27,17 @@ module Provider::Server
       )
       server.wait_for { ready? }
 
-      resource.attributes = server.attributes
-      resource.attributes
+      update_resource_attributes(server.attributes)
     end
 
     action :destroy do
-      requires :instance_id
 
       server = connection(resource.region).servers.get(resource.instance_id)
       server.destroy
 
       server.wait_for { state == 'terminated' }
 
-      resource.attributes = server.attributes
-      resource.attributes
+      update_resource_attributes(server.attributes)
     end
 
     action :stop do
@@ -51,8 +48,7 @@ module Provider::Server
 
       server.wait_for { state == 'stopped' }
 
-      resource.attributes = server.attributes
-      resource.attributes
+      update_resource_attributes(server.attributes)
     end
 
     action :start do
@@ -63,8 +59,7 @@ module Provider::Server
 
       server.wait_for { state == 'running' }
 
-      resource.attributes = server.attributes
-      resource.attributes
+      update_resource_attributes(server.attributes)
     end
 
     action :restart do
@@ -78,8 +73,7 @@ module Provider::Server
 
       server.wait_for { state == 'running' }
 
-      resource.attributes = server.attributes
-      resource.attributes
+      update_resource_attributes(server.attributes)
     end
     
     action :reboot do
@@ -90,8 +84,7 @@ module Provider::Server
 
       server.wait_for { state == 'running' }
 
-      resource.attributes = server.attributes
-      resource.attributes
+      update_resource_attributes(server.attributes)
     end
     
   end

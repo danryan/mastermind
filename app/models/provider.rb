@@ -48,9 +48,9 @@ class Provider
   
   def to_hash
     {
-      type: type,
-      class: self.class.name,
-      options: options
+      :type => type,
+      :class => self.class.name,
+      :options => options
       # actions: self.class.allowed_actions
     }
   end

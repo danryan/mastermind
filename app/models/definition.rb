@@ -6,11 +6,12 @@ class Definition < ActiveRecord::Base
   has_paper_trail
   
   validates :name, 
-    presence: true, 
-    uniqueness: true# ,
-    #     format: { with: /[]}
+    :presence => true, 
+    :uniqueness => true# ,
+    # TODO()
+    #     :format => { with: /[]}
   validates :content, 
-    presence: true
+    :presence => true
     
   def to_pdef
     parse
@@ -22,8 +23,8 @@ class Definition < ActiveRecord::Base
   
   def to_hash
     {
-      name: name,
-      content: content# ,
+      :name => name,
+      :content => content# ,
       # pdef: to_pdef
     }
   end

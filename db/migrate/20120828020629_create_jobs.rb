@@ -3,8 +3,8 @@ class CreateJobs < ActiveRecord::Migration
     create_table :jobs do |t|
       t.string :name
       t.references :definition
-      t.text :fields, default: {}.to_json
-      t.text :last_results, default: {}.to_json
+      t.text :fields, :default =>  {}.to_json
+      t.text :last_results, :default =>  {}.to_json
       t.string :last_wfid
       t.string :state
       

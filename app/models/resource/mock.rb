@@ -1,7 +1,7 @@
 class Resource::Mock < Resource
   register :mock
   
-  attribute :message, type: String
+  attribute :message, :type => String
   
   validates! :message, 
     :presence => true, 

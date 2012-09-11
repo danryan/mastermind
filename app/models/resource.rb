@@ -2,10 +2,10 @@ class Resource
   include ActiveAttr::Model
   include ActiveAttr::TypecastedAttributes
 
-  attribute :action, type: String
-  attribute :name, type: String
-  attribute :type, type: String, default: lambda { self.class.type }
-  attribute :provider, type: Object, default: lambda { Mastermind.providers[self.class.type] }
+  attribute :action, :type => String
+  attribute :name, :type => String
+  attribute :type, :type => String, :default =>  lambda { self.class.type }
+  attribute :provider, :type => Object, :default =>  lambda { Mastermind.providers[self.class.type] }
 
   validates! :action, :name,
     :presence => true

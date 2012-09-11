@@ -11,9 +11,9 @@ module Provider::CM
     
     def connection
       Spice::Connection.new(
-        server_url: options[:server_url],
-        client_name: options[:client_name],
-        client_key: options[:client_key]
+        :server_url => options[:server_url],
+        :client_name => options[:client_name],
+        :client_key => options[:client_key]
       )
     end
 
