@@ -1,5 +1,5 @@
-module Participant::Callback
-  class Failure < Participant
+module Provider::Callback
+  class Failure < Provider
     register 'failure'
 
     def on_workitem

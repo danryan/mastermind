@@ -1,5 +1,5 @@
-module Participant::Server
-  class EC2 < Participant
+module Provider::Server
+  class EC2 < Provider
     option :aws_access_key_id, ENV['AWS_ACCESS_KEY_ID']
     option :aws_secret_access_key, ENV['AWS_SECRET_ACCESS_KEY']
     

@@ -1,7 +1,7 @@
 require 'net/ssh'
 
-module Participant::Remote
-  class HTTP < Participant
+module Provider::Remote
+  class HTTP < Provider
     register :http
     
     action :run do

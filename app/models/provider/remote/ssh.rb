@@ -1,37 +1,27 @@
 require 'net/ssh'
 
-module Participant::Remote
-  class SSHMulti < Participant
-    register :ssh_multi
+module Provider::Remote
+  class SSH < Provider
+    register :ssh
     
     action :run do
-      requires :hosts, :user, :key_data, :command
+      requires :host, :user, :key_data, :command
       
       output = run_ssh(resource.command)
       
       { output: output }
     end
-  
 
     def run_ssh(command)
-      output = {}
-      
-      session = Net::SSH::Multi.start()
+      session = Net::SSH.start(resource.host, resource.user, { key_data: resource.key_data })
+      output = nil
 
-      opts = {}
-      opts[:user] = resource.user    
-      opts[:key_data] = [resource.key_data]
-          
-      resource.hosts.each do |host|
-        session.use(host, opts)
-      end
-        
       session.open_channel do |ch|
         ch.request_pty
         ch.exec command do |ch, success|
           raise ArgumentError, "Cannot execute #{command}" unless success
           ch.on_data do |ichannel, data|
-            output[ichannel[:host]] = data
+            output = data
           end
         end
       end

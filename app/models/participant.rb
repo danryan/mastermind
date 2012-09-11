@@ -59,12 +59,12 @@ class Participant
   
   def self.register(type)
     @type = type
-    Mastermind.dashboard.register_participant "(.+)_#{type}[s]?", self, options
-    Mastermind.participants[Regexp.new("^(.+)_#{type}s?$")] = self
+    Mastermind.dashboard.register_provider "(.+)_#{type}[s]?", self, options
+    Mastermind.providers[Regexp.new("^(.+)_#{type}s?$")] = self
   end
 
   def on_workitem
-    Mastermind.logger.debug participant: type, action: action, params: params, fields: fields
+    Mastermind.logger.debug provider: type, action: action, params: params, fields: fields
 
     @resource = Mastermind.resources[self.class.type].new(params)
 
@@ -78,7 +78,7 @@ class Participant
   end
 
   def on_reply
-    Mastermind.logger.debug participant: type, action: action, params: params, fields: fields
+    Mastermind.logger.debug provider: type, action: action, params: params, fields: fields
   end
 
   def params
@@ -131,49 +131,6 @@ class Participant
     {}
   end
 
-  private
-
-  def validate!
-    resource.valid?
-  end
-  
-  def execute!
-    # clear out any previously encountered errors
-    resource.errors.clear
-
-    action_to_execute = action.to_sym
-
-    begin
-      results = self.send(action_to_execute)
-      if result_field?
-        workitem.fields[result_field] = results
-      else
-        workitem.fields.merge!(results)
-      end
-    rescue => e
-      Mastermind.logger.error e.message, :backtrace => e.backtrace
-      raise e
-    end
-  end
-  
-  
-  # lovingly taken from (fog)[http://fog.io]
-  def requires(*args)
-    missing = missing_attributes(args)
-    if missing.length == 1
-      raise ArgumentError, "#{missing.first} is required for this operation"
-    elsif missing.any?
-      raise ArgumentError, "#{missing[0...-1].join(', ')} and #{missing[-1]} are required for this operation"
-    end
-  end
-
-  def missing_attributes(args)
-    missing = []
-    args.each do |arg|
-      unless resource.send("#{arg}") || resource.attributes.has_key?(arg.to_s) && resource[arg]
-        missing << arg
-      end
-    end
-    missing
-  end
 end
+
+Mastermind.dashboard.register_participant :mastermind, self

@@ -1,12 +1,12 @@
 # Allow specifying of a custom key in which to hold participant results.
 
-participants are refactored into a single generic class
+providers are refactored into a single generic class
 the participant actions are put into Providers.
 the generic participant 
  * is handed the resource attributes
- * looks up the participant
+ * looks up the provider
  * runs the action
- * reports 
+ * updates the resource attributes
  
 
 ## How to do concurrent actions?
@@ -14,7 +14,7 @@ the generic participant
 
 use case: ssh runs over multiple hosts
 
-participants watch a amqp for incoming requests. ??
+providers watch a amqp for incoming requests. ??
 
 
 ## random
@@ -23,7 +23,8 @@ participant -> provider
 
 dsl for resources
 
-    create_ec2_server "foo" do
+    ec2_server "foo" do
+      action "create"
       # ...etc
     end
 

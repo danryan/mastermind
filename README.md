@@ -54,13 +54,13 @@ Mastermind has four basic pieces: a job; a definition; a participant; and a targ
 
 See [Jobs in the wiki](https://github.com/danryan/mastermind/wiki/Jobs)
 
-## Participants
+## providers
 
-See [Participants in the wiki](https://github.com/danryan/mastermind/wiki/Participants)
+See [providers in the wiki](https://github.com/danryan/mastermind/wiki/providers)
 
-## Targets
+## resources
 
-See [Targets in the wiki](https://github.com/danryan/mastermind/wiki/Targets)
+See [resources in the wiki](https://github.com/danryan/mastermind/wiki/resources)
 
 # Dependencies
 
@@ -80,7 +80,7 @@ Mastermind uses the following environment variables for configuration:
 * `MASTERMIND_NOISY` - Whether workflow debug info should be emitted to the logs. Default is `false`.
 * `MASTERMIND_LOG_LEVEL`="info" - The Mastermind log level. Default is `info`.
  
-## AWS participants
+## AWS providers
 
 * `AWS_ACCESS_KEY_ID` - AWS access key id
 * `AWS_SECRET_ACCESS_KEY` - AWS secret access key
@@ -91,7 +91,7 @@ Mastermind uses the following environment variables for configuration:
 * `CAMPFIRE_ACCOUNT` - Campfire account name
 * `CAMPFIRE_TOKEN` - Campfire API token
 
-## Chef participants 
+## Chef providers 
 * `CHEF_SERVER_URL` - Chef server URL. Remember to include the port if applicable.
 * `CHEF_CLIENT_NAME` - Chef client name
 * `CHEF_CLIENT_KEY` - Chef client key (the key itself, not the path). Example: `cat /Users/admin/.chef/admin.pem`
@@ -131,7 +131,7 @@ Mastermind provides a REST-ish JSON API for job and definition management. Pleas
 raise NotImplementedError, "Documentation coming soon!"
 ```
 
-# Custom participants/targets 
+# Custom providers/resources 
 
 ```ruby
 raise NotImplementedError, "Documentation coming soon!"

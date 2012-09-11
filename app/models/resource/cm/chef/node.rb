@@ -1,4 +1,4 @@
-require Rails.root + 'app/resources/cm/chef'
+require Rails.root + 'app/models/resource/cm/chef'
 
 module Resource::CM
   class Chef::Node < Resource

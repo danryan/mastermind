@@ -1,7 +1,7 @@
 require 'spice'
-require Rails.root + 'app/participants/cm/chef'
+require Rails.root + 'app/models/provider/cm/chef'
 
-module Participant::CM
+module Provider::CM
   class Chef::Client < Chef
     
     register :chef_client

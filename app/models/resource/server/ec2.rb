@@ -40,6 +40,14 @@ module Resource::Server
     alias_method :id, :instance_id
     alias_method :id=, :instance_id=
     
+    validates! :image_id, :flavor_id, :availability_zone, :region,
+      :presence => true,
+      :on => :create
+
+    validates! :instance_id, :region,
+      :presence => true,
+      :on => [ :destroy, :stop, :start, :restart, :reboot ]
+
     validates! :image_id,
       format: { with: /^ami-[a-f0-9]{8}$/ },
       allow_nil: true

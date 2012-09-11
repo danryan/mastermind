@@ -18,12 +18,12 @@ module Mastermind
     @dashboard
   end
   
-  def targets
-    @targets ||= Hash.new.with_indifferent_access
+  def resources
+    @resources ||= Hash.new.with_indifferent_access
   end
   
-  def participants
-    @participants ||= Hash.new.with_indifferent_access
+  def providers
+    @providers ||= Hash.new.with_indifferent_access
   end
   
   def launch(job_or_pdef, fields={}, variables={})
@@ -50,13 +50,13 @@ Mastermind.dashboard.add_service('job_observer', Mastermind::JobObserver)
 Mastermind.dashboard.context.logger.noisy = ENV['MASTERMIND_NOISY'] || false
 Mastermind.logger.level = ENV['MASTERMIND_LOG_LEVEL'].try(:to_sym) || :info
 
-# require our targets
-Dir[Rails.root + "app/targets/**/*.rb"].each do |file|
+# require our resources
+Dir[Rails.root + "app/models/resource/**/*.rb"].each do |file|
   require file
 end
 
-# require our participants
-Dir[Rails.root + "app/participants/**/*.rb"].each do |file|
+# require our providers
+Dir[Rails.root + "app/models/provider/**/*.rb"].each do |file|
   require file
 end
 

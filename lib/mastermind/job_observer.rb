@@ -9,6 +9,7 @@ class Mastermind::JobObserver < Ruote::ProcessObserver
   end
   
   def on_launch(wfid, options)
+    
     @job = Job.find(options[:variables]['job_id'])
     @job.run
   end

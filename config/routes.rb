@@ -10,7 +10,7 @@ Mastermind::Application.routes.draw do
   end
   
   resources :definitions, only: [ :index, :show ]
-  resources :participants, only: [ :index, :show ]
+  resources :providers, only: [ :index, :show ]
   
   root to: 'jobs#index'
 

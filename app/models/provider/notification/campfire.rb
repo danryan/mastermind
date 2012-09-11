@@ -1,7 +1,7 @@
 require 'tinder'
 
-module Participant::Notification
-  class Campfire < Participant    
+module Provider::Notification
+  class Campfire < Provider    
     option :account, ENV['CAMPFIRE_ACCOUNT']
     option :room, ENV['CAMPFIRE_ROOM']
     option :token, ENV['CAMPFIRE_TOKEN']

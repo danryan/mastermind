@@ -3,4 +3,8 @@ class Resource::Mock < Resource
   
   attribute :message, type: String
   
+  validates! :message, 
+    :presence => true, 
+    :on => [ :pass, :modify ]
+
 end

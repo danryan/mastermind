@@ -1,14 +1,14 @@
-class ParticipantsController < ApplicationController
+class ProvidersController < ApplicationController
   respond_to :json
   
   def index
-    @participants = Mastermind.participants.inject([]) { |r, (k,v)| r << v.new }
-    respond_with @participants
+    @providers = Mastermind.providers.inject([]) { |r, (k,v)| r << v.new }
+    respond_with @providers
   end
   
   def show
     regex = "(.+)_#{params[:id]}"
-    @participant = Mastermind.participants.find { |k, v| regex.match(k) }[-1].new
-    respond_with @participant
+    @provider = Mastermind.providers.find { |k, v| regex.match(k) }[-1].new
+    respond_with @provider
   end
 end

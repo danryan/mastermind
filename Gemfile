@@ -34,7 +34,7 @@ gem 'ruote-kit', git: 'git://github.com/kennethkalmer/ruote-kit.git'
 # Logging
 gem 'cabin', '~> 0.4.4'
 
-# Support libraries for participants
+# Support libraries for providers
 gem 'fog', '~> 1.5.0'
 gem 'tinder'
 gem 'net-ssh'

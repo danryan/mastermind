@@ -1,7 +1,7 @@
 require 'mail'
 
-module Participant::Notification
-  class Email < Participant    
+module Provider::Notification
+  class Email < Provider    
     option :address, ENV['SMTP_ADDRESS']
     option :port, ENV['SMTP_PORT']
     option :domain, ENV['SMTP_DOMAIN']
