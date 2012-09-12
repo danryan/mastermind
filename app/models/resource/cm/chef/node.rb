@@ -4,7 +4,6 @@ module Resource::CM
   class Chef::Node < Resource
     register :chef_node
 
-    attribute :name, :type => String
     attribute :run_list, :type => Object, :default =>  []
     attribute :automatic, :type => Object, :default =>  {}
     attribute :default, :type => Object, :default =>  {}

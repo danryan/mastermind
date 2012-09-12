@@ -338,6 +338,7 @@ PLATFORMS
 DEPENDENCIES
   active_attr (~> 0.6.0)
   acts_as_list
+  addressable
   bootstrap-sass
   cabin (~> 0.4.4)
   capybara (>= 1.1.2)

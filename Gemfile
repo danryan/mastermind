@@ -41,6 +41,7 @@ gem 'net-ssh'
 gem 'net-ssh-multi'
 gem 'spice'
 gem 'faraday'
+gem 'addressable'
 
 # Queue processing
 gem 'sidekiq', '~> 2.1.1'

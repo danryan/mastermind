@@ -1,37 +1,54 @@
 class Provider
   attr_accessor :resource, :action
 
+  class << self
+
+    def options
+      @options ||= Hash.new.with_indifferent_access
+    end
+
+    def option(name, value)
+      instance_variable_set("@#{name}", value)
+      instance_eval <<-EOF, __FILE__, __LINE__
+      def #{name}
+        @#{name}
+      end
+      EOF
+      options[name] = value
+    end
+
+    def inherited(subclass)
+      options.each do |key, value|
+        subclass.option key, value
+      end
+    end
+
+    def type
+      @type
+    end
+
+    def register(type)
+      @type = type
+      Mastermind.providers[type.to_sym] = self
+    end
+
+    def action(action_name, &block)
+      # action_name = action_name.to_sym
+      # allowed_actions.push(action_name).uniq!
+      define_method(action_name) do
+        instance_eval(&block)
+      end
+    end
+
+  end
+
   def initialize(resource)
     @resource = resource
     @action = action
   end
 
-  def self.options
-    @options ||= Hash.new.with_indifferent_access
-  end
-
   def options
     self.class.options
-  end
-
-  def self.option(name, value)
-    instance_variable_set("@#{name}", value)
-    instance_eval <<-EOF, __FILE__, __LINE__
-    def #{name}
-      @#{name}
-    end
-    EOF
-    options[name] = value
-  end
-  
-  def self.inherited(subclass)
-    options.each do |key, value|
-      subclass.option key, value
-    end
-  end
-
-  def self.type
-    @type
   end
 
   def type
@@ -53,19 +70,6 @@ class Provider
       :options => options
       # actions: self.class.allowed_actions
     }
-  end
-  
-  def self.register(type)
-    @type = type
-    Mastermind.providers[type.to_sym] = self
-  end
-
-  def self.action(action_name, &block)
-    # action_name = action_name.to_sym
-    # allowed_actions.push(action_name).uniq!
-    define_method(action_name) do
-      instance_eval(&block)
-    end
   end
   
   # default "do-nothing" action. Useful for debugging and tests

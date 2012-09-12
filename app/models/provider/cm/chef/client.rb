@@ -9,7 +9,7 @@ module Provider::CM
     action :list do
       clients = connection.get('/clients').keys
       
-      clients
+      update_resource_attributes({ :clients => clients })
     end
     
   end

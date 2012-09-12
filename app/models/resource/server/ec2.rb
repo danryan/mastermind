@@ -44,9 +44,11 @@ module Resource::Server
       :presence => true,
       :on => :create
 
-    validates! :instance_id, :region,
-      :presence => true,
-      :on => [ :destroy, :stop, :start, :restart, :reboot ]
+    [ :destroy, :stop, :start, :restart, :reboot ].each do |act|      
+      validates! :instance_id, :region,
+        :presence => true,
+        :on => act
+    end
 
     validates! :image_id,
       :format => { with: /^ami-[a-f0-9]{8}$/ },

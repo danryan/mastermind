@@ -53,7 +53,7 @@ class Participant
       :regex => regex,
       :class => self.class.name,
       :options => options,
-      :actions => self.class.allowed_actions
+      :allowed_actions => self.class.allowed_actions
     }
   end
   
