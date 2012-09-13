@@ -16,3 +16,4 @@
 .env
 mastermind.wiki
 examples
+Gemfile.lock

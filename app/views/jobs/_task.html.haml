@@ -1,6 +1,0 @@
-%fieldset
-  %h3 Task
-  = link_to 'remove', '#', class: 'remove_fields'
-  = f.input :definition, collection: Mastermind.definitions, value_method: :name
-
-  = f.input :_destroy, as: :hidden
