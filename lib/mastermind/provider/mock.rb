@@ -1,8 +1,6 @@
 module Mastermind
   class Provider
     class Mock < Provider
-      register :mock
-
       action :pass do
         Mastermind.logger.info resource.message
       end

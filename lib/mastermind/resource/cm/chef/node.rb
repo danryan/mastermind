@@ -2,7 +2,6 @@ module Mastermind
   class Resource
     module CM
       class Chef::Node < Chef
-        register :chef_node
         provider Mastermind::Provider::CM::Chef::Node
         actions :list, :show, :create, :update, :delete
         

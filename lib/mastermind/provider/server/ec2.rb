@@ -5,8 +5,6 @@ module Mastermind
         option :aws_access_key_id, ENV['AWS_ACCESS_KEY_ID']
         option :aws_secret_access_key, ENV['AWS_SECRET_ACCESS_KEY']
 
-        register :ec2_server
-
         def connection(region=nil)
           Fog::Compute.new(
             :provider => 'AWS',

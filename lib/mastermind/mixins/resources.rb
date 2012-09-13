@@ -34,7 +34,7 @@ module Mastermind
       module ClassMethods
         def register(type)
            @type = type.to_s
-           Mastermind.resources[type.to_sym] = self
+           # Mastermind.resources[type.to_sym] = self
         end
 
         def provider(provider_class)

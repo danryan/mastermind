@@ -1,8 +1,7 @@
-module Resource
+module Mastermind
   class Resource
     module Notification
       class Email < Resource
-        register :email
         provider Mastermind::Provider::Notification::Email
         actions :notify
         

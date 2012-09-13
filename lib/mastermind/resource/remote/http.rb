@@ -2,7 +2,6 @@ module Mastermind
   class Resource
     module Remote
       class HTTP < Resource
-        register :http
         provider Mastermind::Provider::Remote::HTTP
         actions :get, :post, :put, :delete
 

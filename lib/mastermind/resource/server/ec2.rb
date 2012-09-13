@@ -2,7 +2,6 @@ module Mastermind
   class Resource
     module Server
       class EC2 < Resource
-        register :ec2_server
         provider Mastermind::Provider::Server::EC2
         actions :create, :destroy, :stop, :start, :restart, :reboot
 
@@ -59,16 +58,16 @@ module Mastermind
           :allow_blank => true
 
         validates! :flavor_id,
-          inclusion: { in: Mastermind::AWS::FLAVORS },
+          inclusion: { in: Mastermind::Mixins::AWS::FLAVORS },
           :allow_blank => true
 
         validates! :availability_zone,
-          :if => lambda { |s| s.region? && Mastermind::AWS::ZONES[s.region] },
-          :inclusion => { in: lambda { |s| Mastermind::AWS::ZONES[s.region] } },
+          :if => lambda { |s| s.region? && Mastermind::Mixins::AWS::ZONES[s.region] },
+          :inclusion => { in: lambda { |s| Mastermind::Mixins::AWS::ZONES[s.region] } },
           :allow_blank => true
 
         validates! :region,
-          :inclusion => { in: Mastermind::AWS::ZONES.keys },
+          :inclusion => { in: Mastermind::Mixins::AWS::ZONES.keys },
           :allow_blank => true
 
         validates! :id, :instance_id,

@@ -2,7 +2,6 @@ module Mastermind
   class Resource
     module Remote
       class SSH < Resource
-        register :ssh
         provider Mastermind::Provider::Remote::SSH
         actions :run
 

@@ -2,7 +2,6 @@ module Mastermind
   class Resource
     module Notification
       class Campfire < Resource
-        register :campfire
         provider Mastermind::Provider::Notification::Campfire
         actions :notify
 

@@ -4,6 +4,7 @@ require 'mastermind/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "mastermind"
+  gem.platform      = Gem::Platform::RUBY
   gem.version       = Mastermind::VERSION
   gem.authors       = ["Dan Ryan"]
   gem.email         = ["dan@appliedawesome.com"]
@@ -16,8 +17,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   
   gem.add_dependency 'activesupport', '~> 3.2.8'
-  gem.add_dependency 'multi_json', '~> 1.3.6'
-  gem.add_dependency 'multi_xml'
+  # gem.add_dependency 'json', '~> 1.7.5'
   gem.add_dependency 'active_attr', '~> 0.6.0'
   # gem.add_dependency 'state_machine'
   gem.add_dependency 'ruote', '~> 2.3.0'

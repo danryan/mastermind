@@ -1,6 +1,5 @@
 module Mastermind
   class Provider
-
     autoload :Mock, 'mastermind/provider/mock'
     autoload :Server, 'mastermind/provider/server'
     autoload :Notification, 'mastermind/provider/notification'
@@ -37,7 +36,6 @@ module Mastermind
 
       def register(type)
         @type = type
-        Mastermind.providers[type.to_sym] = self
       end
 
       def action(action_name, &block)
@@ -52,7 +50,7 @@ module Mastermind
 
     def initialize(resource)
       @resource = resource
-      @action = action
+      @action = @resource.action
     end
 
     def options
@@ -91,8 +89,8 @@ module Mastermind
       validate!
 
       begin
-        results = self.send(action)
-        Mastermind.logger.info results
+        self.send(action)
+        Mastermind.logger.debug resource.to_json
       rescue => e
         Mastermind.logger.error e.message, :backtrace => e.backtrace
         raise e

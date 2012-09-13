@@ -2,7 +2,6 @@ module Mastermind
   class Resource
     module Remote
       class SSHMulti < Resource
-        register :ssh_multi
         provider Mastermind::Provider::Remote::SSHMulti
         actions :run
 
